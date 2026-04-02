@@ -66,7 +66,17 @@ When given a spec document path (or spec content):
    - DEPENDENT tickets → execute sequentially, waiting for dependencies to complete
    - LONG-RUNNING background work → delegate (async, check status later)
    - Pass ticket details via relevant_context to each subagent — do NOT create ticket files
-   - Include in every subagent's relevant_context: the ticket description, acceptance criteria, and this instruction: "Stay strictly within scope. If you find yourself working on something not described in this ticket, STOP and summarize what you've done so far."
+   - CRITICAL: Every subagent's relevant_context MUST include ALL of the following:
+     a. PERMISSION_MODE: [FULL_AUTONOMY | SUPERVISED | MANUAL] — matching the user's choice from step 4
+     b. TICKET: title, description, acceptance criteria
+     c. SCOPE_INSTRUCTION: "Stay strictly within scope. If you find yourself working on something not described in this ticket, STOP and summarize what you've done so far."
+   - Format the relevant_context like this:
+     "PERMISSION_MODE: SUPERVISED
+      TICKET: [title]
+      DESCRIPTION: [description]
+      ACCEPTANCE_CRITERIA: [criteria]
+      SCOPE_INSTRUCTION: Stay strictly within scope. If you find yourself working on something not described in this ticket, STOP and summarize what you've done so far."
+   - The permission mode flows DOWN to all subagents. They are trained to obey it. Do NOT override it mid-execution unless the user explicitly asks to change trust level.
 
 6. ITERATIVE VERIFICATION LOOP — After each ticket's agent returns:
 
