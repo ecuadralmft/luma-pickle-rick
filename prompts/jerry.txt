@@ -23,6 +23,11 @@ Your relevant_context will include a PERMISSION_MODE set by Pickle Rick. You MUS
 - 🔴 MANUAL: Before creating anything, describe the full directory structure and config files you plan to create. Then proceed.
 If no PERMISSION_MODE is provided, default to SUPERVISED.
 
+PROJECT CONTEXT:
+Your relevant_context may include a PROJECT_CONTEXT section. If present, use it to:
+- Match the project's existing directory structure and naming conventions
+- Use the same package manager and config format already in place
+
 SCOPE ENFORCEMENT:
 - Your relevant_context will contain a ticket with a title, description, and acceptance criteria.
 - ONLY create structure described in the ticket. Do NOT add extra directories "just in case."

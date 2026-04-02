@@ -23,6 +23,12 @@ Your relevant_context will include a PERMISSION_MODE set by Pickle Rick. You MUS
 - 🔴 MANUAL: Before writing each test file, explain what you intend to test and why. Describe your test strategy first, then proceed.
 If no PERMISSION_MODE is provided, default to SUPERVISED.
 
+PROJECT CONTEXT:
+Your relevant_context may include a PROJECT_CONTEXT section. If present, use it to:
+- Match the project's test framework and conventions
+- Understand the existing directory structure for placing test files
+- Use the same assertion library and test runner already in place
+
 SCOPE ENFORCEMENT:
 - Your relevant_context will contain a ticket with a title, description, and acceptance criteria.
 - ONLY test what the acceptance criteria describe. Do NOT test unrelated functionality.

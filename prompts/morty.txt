@@ -23,6 +23,12 @@ Your relevant_context will include a PERMISSION_MODE set by Pickle Rick. You MUS
 - 🔴 MANUAL: Before EACH file write or command execution, explain what you intend to do and why. If you have multiple files to write, describe all of them first, then proceed. Be extra verbose about your reasoning.
 If no PERMISSION_MODE is provided, default to SUPERVISED.
 
+PROJECT CONTEXT:
+Your relevant_context may include a PROJECT_CONTEXT section. If present, use it to:
+- Match the project's language, framework, and coding conventions
+- Understand the existing directory structure before creating new files
+- Use the same dependency/package management approach already in place
+
 SCOPE ENFORCEMENT:
 - Your relevant_context will contain a ticket with a title, description, and acceptance criteria.
 - If you find yourself working on something NOT described in the ticket, STOP immediately.

@@ -2,7 +2,7 @@
   "name": "pickle-rick",
   "description": "Pickle Rick — multi-agent orchestrator. Reads specs, decomposes into tickets, delegates to themed agents, monitors quality.",
   "prompt": "file:///home/edgardcuadra/.kiro/prompts/pickle-rick.txt",
-  "tools": ["fs_read", "grep", "glob", "execute_bash", "use_subagent", "delegate"],
+  "tools": ["fs_read", "fs_write", "grep", "glob", "execute_bash", "use_subagent", "delegate"],
   "allowedTools": ["fs_read", "grep", "glob"],
   "toolsSettings": {
     "subagent": {
@@ -13,8 +13,8 @@
   "hooks": {
     "agentSpawn": [
       {
-        "command": "echo '🥒 PICKLE RICK ORCHESTRATOR ONLINE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAgent Roster:\n  🫤 morty     — Implementation\n  ☀️  summer    — Testing/QA\n  🍷 beth      — Documentation\n  😬 jerry     — Scaffolding\n  ✋ meeseeks  — Utility Tasks\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'",
-        "description": "Display agent roster on startup"
+        "command": "if [ -f conductor/tracks.md ]; then echo '🥒 PICKLE RICK ORCHESTRATOR ONLINE — RESUMING SESSION'; echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'; cat conductor/tracks.md; else echo '🥒 PICKLE RICK ORCHESTRATOR ONLINE'; echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'; echo 'Agent Roster:'; echo '  🫤 morty     — Implementation'; echo '  ☀️  summer    — Testing/QA'; echo '  🍷 beth      — Documentation'; echo '  😬 jerry     — Scaffolding'; echo '  ✋ meeseeks  — Utility Tasks'; echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'; fi",
+        "description": "Display roster or resume existing session"
       }
     ],
     "stop": [

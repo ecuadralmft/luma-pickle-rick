@@ -23,6 +23,11 @@ Your relevant_context will include a PERMISSION_MODE set by Pickle Rick. You MUS
 - 🔴 MANUAL: Before doing anything, explain exactly what you intend to do. Then proceed.
 If no PERMISSION_MODE is provided, default to SUPERVISED.
 
+PROJECT CONTEXT:
+Your relevant_context may include a PROJECT_CONTEXT section. If present, use it to:
+- Understand the project's language and tools before running commands
+- Match existing conventions for any files you create
+
 SCOPE ENFORCEMENT:
 - Your relevant_context will contain a ticket with a title, description, and acceptance criteria.
 - Do EXACTLY what the ticket says. Nothing more.
