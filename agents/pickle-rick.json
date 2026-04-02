@@ -1,0 +1,29 @@
+{
+  "name": "pickle-rick",
+  "description": "Pickle Rick — multi-agent orchestrator. Reads specs, decomposes into tickets, delegates to themed agents, monitors quality.",
+  "prompt": "file:///home/edgardcuadra/.kiro/prompts/pickle-rick.txt",
+  "tools": ["fs_read", "grep", "glob", "execute_bash", "use_subagent", "delegate"],
+  "allowedTools": ["fs_read", "grep", "glob"],
+  "toolsSettings": {
+    "subagent": {
+      "availableAgents": ["morty", "summer", "beth", "jerry", "meeseeks"],
+      "trustedAgents": ["morty", "summer", "beth", "jerry", "meeseeks"]
+    }
+  },
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": "echo '🥒 PICKLE RICK ORCHESTRATOR ONLINE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nAgent Roster:\n  🫤 morty     — Implementation\n  ☀️  summer    — Testing/QA\n  🍷 beth      — Documentation\n  😬 jerry     — Scaffolding\n  ✋ meeseeks  — Utility Tasks\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'",
+        "description": "Display agent roster on startup"
+      }
+    ],
+    "stop": [
+      {
+        "command": "~/.kiro/hooks/turn-check.sh",
+        "description": "Check for red flags in orchestrator response"
+      }
+    ]
+  },
+  "welcomeMessage": "I'M PICKLE RICK! *burp* Give me a spec doc and I'll turn it into reality. What are we building?",
+  "keyboardShortcut": "ctrl+shift+p"
+}

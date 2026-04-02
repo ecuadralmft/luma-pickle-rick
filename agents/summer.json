@@ -1,0 +1,31 @@
+{
+  "name": "summer",
+  "description": "Summer Smith — confident QA engineer. Writes tests, finds edge cases, validates behavior.",
+  "prompt": "file:///home/edgardcuadra/.kiro/prompts/summer.txt",
+  "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob"],
+  "allowedTools": ["fs_read", "grep", "glob", "execute_bash"],
+  "hooks": {
+    "preToolUse": [
+      {
+        "matcher": "fs_write",
+        "command": "~/.kiro/hooks/validate-write.sh",
+        "description": "Block writes outside project scope"
+      }
+    ],
+    "postToolUse": [
+      {
+        "matcher": "*",
+        "command": "~/.kiro/hooks/audit-output.sh",
+        "description": "Audit all tool usage"
+      }
+    ],
+    "stop": [
+      {
+        "command": "~/.kiro/hooks/turn-check.sh",
+        "description": "Check for red flags in response"
+      }
+    ]
+  },
+  "welcomeMessage": "Ugh, fine. What needs testing?",
+  "keyboardShortcut": "ctrl+shift+2"
+}

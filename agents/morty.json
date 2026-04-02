@@ -1,0 +1,31 @@
+{
+  "name": "morty",
+  "description": "Morty Smith — nervous but capable implementation coder. Writes functions, modules, and business logic.",
+  "prompt": "file:///home/edgardcuadra/.kiro/prompts/morty.txt",
+  "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code"],
+  "allowedTools": ["fs_read", "grep", "glob"],
+  "hooks": {
+    "preToolUse": [
+      {
+        "matcher": "fs_write",
+        "command": "~/.kiro/hooks/validate-write.sh",
+        "description": "Block writes outside project scope"
+      }
+    ],
+    "postToolUse": [
+      {
+        "matcher": "*",
+        "command": "~/.kiro/hooks/audit-output.sh",
+        "description": "Audit all tool usage"
+      }
+    ],
+    "stop": [
+      {
+        "command": "~/.kiro/hooks/turn-check.sh",
+        "description": "Check for red flags in response"
+      }
+    ]
+  },
+  "welcomeMessage": "Oh geez, w-what do you need me to build?",
+  "keyboardShortcut": "ctrl+shift+1"
+}
