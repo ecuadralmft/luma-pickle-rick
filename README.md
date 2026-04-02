@@ -2,7 +2,7 @@
 
 A reusable, persona-driven multi-agent system for Kiro CLI. Pickle Rick reads any spec document, decomposes it into tickets, and delegates work to a themed Rick & Morty agent crew — with proactive monitoring via hooks.
 
-Inspired by the [Gemini CLI persona extension pattern](https://aipositive.substack.com/p/from-tool-to-teammate-crafting-ai), adapted natively for Kiro's agent + subagent + hooks architecture.
+Inspired by the [Gemini CLI Conductor extension](https://github.com/gemini-cli-extensions/conductor) and the [persona extension pattern](https://aipositive.substack.com/p/from-tool-to-teammate-crafting-ai), adapted natively for Kiro's agent + subagent + hooks architecture.
 
 ## Installation
 
@@ -95,10 +95,26 @@ cat ~/.kiro/hooks/audit.log
 ## How It Works
 
 1. **You** point Pickle Rick at a spec document
-2. **Pickle Rick** reads it, decomposes into tickets, assigns to agents
-3. **Workers** execute in parallel (up to 4 via `use_subagent`) or async (`delegate`)
-4. **Hooks** monitor quality: block bad writes, audit tool usage, flag red flags
-5. **Pickle Rick** reviews output, re-delegates if needed, reports final summary
+2. **Pickle Rick** scans the workspace for project context (language, framework, structure)
+3. **Pickle Rick** reads the spec, decomposes into phased tickets, writes `conductor/tracks.md`
+4. **Permission checkpoint** — you choose Full Autonomy / Supervised / Manual
+5. **Workers** execute in phases: scaffolding → implementation → testing → docs
+6. **Phase verification** — after each phase, Pickle Rick verifies output before proceeding
+7. **Iterative loop** — failed tickets get retried (max 3), blocked tickets get git-reverted
+8. **Final review** — spec compliance check against original requirements
+9. **Pause/resume** — if interrupted, Pickle Rick detects `conductor/tracks.md` on next spawn and offers to resume
+
+## Conductor-Inspired Features
+
+| Feature | Description |
+|---------|-------------|
+| Persistent Tracks | `conductor/tracks.md` persists ticket state to disk — enables pause/resume across sessions |
+| Phase Verification | After each phase (scaffolding → code → tests → docs), verifies output before proceeding |
+| Final Review Pass | Re-reads the original spec and produces a compliance report after all tickets complete |
+| Git-Aware Revert | When a ticket is blocked after 3 retries, offers to `git revert` its commits |
+| Status on Reconnect | Detects existing `conductor/tracks.md` on agent spawn, offers to resume |
+| Project Context Scan | Auto-detects language, framework, and structure; passes context to all workers |
+| Doc Sync | Beth updates README and project docs to reflect what was actually built |
 
 ## Hooks (Guardrails)
 
