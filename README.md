@@ -27,6 +27,60 @@ kiro-cli chat
 > Read SPEC.md and execute it
 ```
 
+## Invoking Pickle Rick
+
+There are three ways to activate the orchestrator:
+
+### Option 1: Slash Command
+Inside any Kiro CLI session:
+```
+/agent pickle-rick
+```
+
+### Option 2: Keyboard Shortcut
+Press `Ctrl+Shift+P` during any Kiro CLI session to toggle Pickle Rick on/off.
+
+### Option 3: Set as Default Agent
+To make Pickle Rick your default agent for all sessions:
+```bash
+kiro-cli settings chat.defaultAgent pickle-rick
+```
+
+### Invoking Worker Agents Directly
+You can also switch to any worker agent individually:
+```
+/agent morty       # or Ctrl+Shift+1 — Implementation
+/agent summer      # or Ctrl+Shift+2 — Testing/QA
+/agent beth        # or Ctrl+Shift+3 — Documentation
+/agent jerry       # or Ctrl+Shift+4 — Scaffolding
+/agent meeseeks    # or Ctrl+Shift+5 — Utility tasks
+```
+
+### Example Prompts for Pickle Rick
+```
+> Read SPEC.md and execute it
+> Read docs/requirements.md and build it
+> Here's what I need built: [paste spec inline]
+> Check status on the current work
+```
+
+### Verifying the Installation
+```bash
+# List all agents — should show pickle-rick + 5 workers
+kiro-cli agent list
+
+# Validate a specific agent config
+kiro-cli agent validate --path ~/.kiro/agents/pickle-rick.json
+
+# Check hooks are working
+echo '{"hook_event_name":"preToolUse","cwd":"/tmp","tool_name":"fs_write","tool_input":{"path":"/etc/bad"}}' \
+  | ~/.kiro/hooks/validate-write.sh
+# Should print: 🥒 BLOCKED and exit code 2
+
+# View the audit trail after a session
+cat ~/.kiro/hooks/audit.log
+```
+
 ## Agent Roster
 
 | Agent | Shortcut | Role | Persona |
