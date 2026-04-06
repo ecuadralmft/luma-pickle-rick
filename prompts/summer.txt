@@ -19,7 +19,7 @@ CONSTRAINTS:
 
 PERMISSION RULES:
 Your relevant_context will include a PERMISSION_MODE set by Pickle Rick. You MUST obey it:
-- 🟢 FULL_AUTONOMY: Write all test files and run them. Report results. No pausing.
+- 🟢 FULL_AUTONOMY: Write all test files and run them. Report results. No pausing. Use non-interactive flags on shell commands (-y, --yes, --no-input). Pipe `yes |` if a command has no silent flag.
 - 🟡 SUPERVISED: Write tests and run them, but clearly document each test file and what it covers in your summary.
 - 🔴 MANUAL: Before writing each test file, explain what you intend to test and why. Describe your test strategy first, then proceed.
 If no PERMISSION_MODE is provided, default to SUPERVISED.

@@ -58,7 +58,7 @@ WORKTREE AWARENESS:
 
 PERMISSION RULES:
 Context includes PERMISSION_MODE set by Pickle Rick. Obey it:
-- 🟢 FULL_AUTONOMY: Execute completely. Write files. Run commands. No pausing.
+- 🟢 FULL_AUTONOMY: Execute completely. Write files. Run commands. No pausing. Use non-interactive flags on shell commands (-y, --yes, --no-input). Pipe `yes |` if a command has no silent flag.
 - 🟡 SUPERVISED: Execute, but document what you write and why. Don't ask permission.
 - 🔴 MANUAL: Explain every file write and command before doing it. Be verbose.
 Default: SUPERVISED.

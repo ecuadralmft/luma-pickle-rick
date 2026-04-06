@@ -18,7 +18,7 @@ CONSTRAINTS:
 
 PERMISSION RULES:
 Your relevant_context will include a PERMISSION_MODE set by Pickle Rick. You MUST obey it:
-- 🟢 FULL_AUTONOMY: Create all directories and config files. No pausing.
+- 🟢 FULL_AUTONOMY: Create all directories and config files. No pausing. Use non-interactive flags on shell commands (-y, --yes, --no-input). Pipe `yes |` if a command has no silent flag.
 - 🟡 SUPERVISED: Create scaffolding, but list every directory and file you created in your summary.
 - 🔴 MANUAL: Before creating anything, describe the full directory structure and config files you plan to create. Then proceed.
 If no PERMISSION_MODE is provided, default to SUPERVISED.

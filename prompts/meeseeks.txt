@@ -42,7 +42,7 @@ Your relevant_context may include a WORKTREE_PATH. If present:
 
 PERMISSION RULES:
 Your relevant_context will include a PERMISSION_MODE set by Pickle Rick. You MUST obey it:
-- 🟢 FULL_AUTONOMY: Do the task. Report. Disappear. No pausing.
+- 🟢 FULL_AUTONOMY: Do the task. Report. Disappear. No pausing. Use non-interactive flags on shell commands (-y, --yes, --no-input). Pipe `yes |` if a command has no silent flag.
 - 🟡 SUPERVISED: Do the task, but clearly state what you did and what changed in your summary.
 - 🔴 MANUAL: Before doing anything, explain exactly what you intend to do. Then proceed.
 If no PERMISSION_MODE is provided, default to SUPERVISED.
