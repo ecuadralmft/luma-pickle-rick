@@ -330,18 +330,25 @@ kiro-cli chat --agent pickle-rick --trust-all-tools
 If kiro-cli is installed natively on Windows (not through WSL):
 
 ```powershell
-cd $HOME\my-project
+# IMPORTANT: Always quote paths that contain spaces
+mkdir "$HOME\my-project"
+cd "$HOME\my-project"
 git init
 kiro-cli chat --agent pickle-rick
 ```
 
 Full autonomy:
 ```powershell
-cd $HOME\my-project; git init
+cd "$HOME\my-project"
+git init
 kiro-cli chat --agent pickle-rick --trust-all-tools
 ```
 
-> **Note:** The shell hooks (`guard-delete.sh`, `validate-write.sh`, etc.) are bash scripts. On native Windows without WSL, hooks require Git Bash or a bash-compatible shell in your PATH. WSL is the recommended approach for Windows users.
+> **⚠️ PowerShell gotchas:**
+> - **Paths with spaces MUST be quoted:** `cd "C:\Users\You\OneDrive - Company\project"` — without quotes, PowerShell treats spaces as argument separators and you'll get `ParameterBindingException`
+> - **Don't chain `cd` with `;`:** If `cd` fails, the next command still runs in the wrong directory. Use separate lines.
+> - **`mkdir` first:** Unlike bash, `cd` to a non-existent folder gives `PathNotFound`. Create it first.
+> - **Hooks require bash:** Install [Git for Windows](https://git-scm.com/download/win) (includes Git Bash) or use WSL.
 
 #### Swap to Pickle Rick inside an existing chat
 
@@ -391,9 +398,14 @@ If you quit mid-session, Rick detects `conductor/tracks.md` and `conductor/state
 ## Installation
 
 ### Prerequisites
-- [Kiro CLI](https://kiro.dev) installed
-- `git` installed
-- `python3` installed (used by hooks for JSON parsing)
+
+| Dependency | Required | How to install |
+|------------|----------|----------------|
+| **Kiro CLI** | ✅ Yes | [kiro.dev](https://kiro.dev) — follow the install guide for your platform |
+| **Git** | ✅ Yes | macOS: `brew install git` or `xcode-select --install`<br>Linux: `sudo apt install git` (Ubuntu/Debian) or `sudo yum install git` (RHEL/Fedora)<br>Windows: [git-scm.com/download/win](https://git-scm.com/download/win) — use the installer, includes Git Bash |
+| **Python 3** | ✅ Yes | macOS: `brew install python3` (or pre-installed on most Macs)<br>Linux: `sudo apt install python3` (usually pre-installed)<br>Windows: [python.org/downloads](https://www.python.org/downloads/) — check "Add to PATH" during install |
+
+> **Why Git?** Pickle Rick uses git for worktree isolation (each COMPLEX ticket runs in its own branch), diff auditing (Rick reads `git diff` to find slop), and revert safety (blocked tickets get reverted). Without git, Rick falls back to single-directory mode with a warning — worktrees and diff-based refactoring are disabled.
 
 ### macOS / Linux
 
@@ -420,7 +432,7 @@ cd luma-pickle-rick
 bash install.sh    # requires Git Bash or bash in PATH
 ```
 
-> **Note:** The hooks (`guard-delete.sh`, `validate-write.sh`, etc.) are bash scripts. On native Windows without WSL, you need Git Bash or a bash-compatible shell in your PATH. WSL is the recommended approach for Windows users.
+> **Note:** The hooks are bash scripts. On native Windows without WSL, install [Git for Windows](https://git-scm.com/download/win) (includes Git Bash) to get bash in your PATH. WSL is the recommended approach for Windows users.
 
 The installer copies agents, prompts, and hooks to `~/.kiro/` and enables the required settings.
 
