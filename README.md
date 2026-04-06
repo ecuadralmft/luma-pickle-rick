@@ -411,13 +411,28 @@ If you quit mid-session, Rick detects `conductor/tracks.md` and `conductor/state
 
 ### Prerequisites
 
-| Dependency | Required | How to install |
-|------------|----------|----------------|
-| **Kiro CLI** | ✅ Yes | [kiro.dev](https://kiro.dev) — follow the install guide for your platform |
-| **Git** | ✅ Yes | macOS: `brew install git` or `xcode-select --install`<br>Linux: `sudo apt install git` (Ubuntu/Debian) or `sudo yum install git` (RHEL/Fedora)<br>Windows: [git-scm.com/download/win](https://git-scm.com/download/win) — use the installer, includes Git Bash |
-| **Python 3** | ✅ Yes | macOS: `brew install python3` (or pre-installed on most Macs)<br>Linux: `sudo apt install python3` (usually pre-installed)<br>Windows: [python.org/downloads](https://www.python.org/downloads/) — check "Add to PATH" during install |
+| Dependency | Required | Used by | How to install |
+|------------|----------|---------|----------------|
+| **Kiro CLI** | ✅ Yes | Core runtime — the CLI that runs the agents | [kiro.dev](https://kiro.dev) — follow the install guide for your platform |
+| **Git** | ✅ Yes | Worktree isolation, `git diff` auditing, `git revert` safety, branch-per-ticket | macOS: `brew install git` or `xcode-select --install`<br>Linux: `sudo apt install git` (Ubuntu/Debian) or `sudo yum install git` (RHEL/Fedora)<br>Windows: [git-scm.com/download/win](https://git-scm.com/download/win) — includes Git Bash |
+| **Python 3** | ✅ Yes | All hooks use `python3` to parse JSON events from Kiro CLI; `install.sh` uses it to merge settings | macOS: `brew install python3` (or pre-installed)<br>Linux: `sudo apt install python3` (usually pre-installed)<br>Windows: [python.org/downloads](https://www.python.org/downloads/) — check "Add to PATH" during install |
+| **Bash** | ✅ Yes | All hooks (`.sh` files), `install.sh` | macOS/Linux: pre-installed<br>Windows: included with [Git for Windows](https://git-scm.com/download/win), or use WSL |
 
-> **Why Git?** Pickle Rick uses git for worktree isolation (each COMPLEX ticket runs in its own branch), diff auditing (Rick reads `git diff` to find slop), and revert safety (blocked tickets get reverted). Without git, Rick falls back to single-directory mode with a warning — worktrees and diff-based refactoring are disabled.
+> **Without Git:** Rick falls back to single-directory mode with a warning — worktree isolation and diff-based refactoring are disabled. Everything else still works.
+>
+> **Without Python 3:** Hooks will fail silently — the deletion guard, write validator, audit logger, and turn checker all depend on `python3` for JSON parsing. Run `python3 --version` to verify it's in your PATH.
+>
+> **Without Bash (Windows only):** Hooks won't execute. Install [Git for Windows](https://git-scm.com/download/win) (includes Git Bash) or use WSL.
+
+### Verify prerequisites
+
+```bash
+# Run these to confirm everything is installed
+kiro-cli --version        # Kiro CLI
+git --version             # Git
+python3 --version         # Python 3
+bash --version            # Bash (relevant on Windows)
+```
 
 ### macOS / Linux
 
