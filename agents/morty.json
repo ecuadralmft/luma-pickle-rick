@@ -10,6 +10,11 @@
         "matcher": "fs_write",
         "command": "~/.kiro/hooks/validate-write.sh",
         "description": "Block writes outside project scope"
+      },
+      {
+        "matcher": "execute_bash",
+        "command": "~/.kiro/hooks/guard-delete.sh",
+        "description": "Guard file deletion based on autonomy mode"
       }
     ],
     "postToolUse": [

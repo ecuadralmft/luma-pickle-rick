@@ -135,11 +135,27 @@ If the compliance check finds gaps, Rick creates fix tickets and runs another ro
 
 Set by Rick at session start. Cascades to all subagents.
 
-| Mode | Behavior |
-|------|----------|
-| 🟢 FULL_AUTONOMY | Runs everything, reports at the end. Fix tickets created automatically. |
-| 🟡 SUPERVISED | Runs in batches per phase, shows progress, asks to continue. |
-| 🔴 MANUAL | Shows each ticket before delegating, waits for approval. |
+| Mode | Behavior | File Deletion |
+|------|----------|---------------|
+| 🟢 FULL_AUTONOMY | Runs everything, reports at the end. Fix tickets created automatically. | Auto-approved silently |
+| 🟡 SUPERVISED | Runs in batches per phase, shows progress, asks to continue. | Allowed with warning |
+| 🔴 MANUAL | Shows each ticket before delegating, waits for approval. | Blocked until explicitly approved |
+
+### Switching Autonomy Mid-Session
+
+You can change the autonomy level at any time during execution:
+
+```
+> Switch to manual
+> Change autonomy to supervised
+> Go full auto
+```
+
+Rick updates `conductor/state.json`, announces the change, and all subsequent agent actions (including the file deletion guard) follow the new mode immediately.
+
+### File Deletion Guard
+
+A `preToolUse` hook (`guard-delete.sh`) intercepts any bash command containing `rm`, `rmdir`, `unlink`, or `shred` and enforces the current autonomy mode's deletion policy. This runs on every agent (morty, summer, meeseeks, and Rick himself).
 
 ---
 

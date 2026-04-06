@@ -11,6 +11,13 @@
     }
   },
   "hooks": {
+    "preToolUse": [
+      {
+        "matcher": "execute_bash",
+        "command": "~/.kiro/hooks/guard-delete.sh",
+        "description": "Guard file deletion based on autonomy mode"
+      }
+    ],
     "agentSpawn": [
       {
         "command": "if [ -f conductor/state.json ]; then echo '🥒 PICKLE RICK v2 ORCHESTRATOR — RESUMING SESSION'; echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'; cat conductor/tracks.md 2>/dev/null; echo ''; echo 'State:'; cat conductor/state.json | python3 -c \"import sys,json; s=json.load(sys.stdin); print(f\\\"Phase: {s.get(\\\\\\\"current_phase\\\\\\\",\\\\\\\"unknown\\\\\\\")} | Mode: {s.get(\\\\\\\"permission_mode\\\\\\\",\\\\\\\"unset\\\\\\\")} | Tickets: {len(s.get(\\\\\\\"tickets\\\\\\\",{}))}\\\")\"; elif [ -f conductor/tracks.md ]; then echo '🥒 PICKLE RICK v2 ORCHESTRATOR — RESUMING SESSION'; echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'; cat conductor/tracks.md; else echo '🥒 PICKLE RICK v2 ORCHESTRATOR ONLINE'; echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'; echo 'Agent Roster:'; echo '  🫤 morty     — Implementation (research/plan/code)'; echo '  ☀️  summer    — Testing/QA + Slop Detection'; echo '  🍷 beth      — Documentation'; echo '  😬 jerry     — Scaffolding'; echo '  ✋ meeseeks  — Utility + Refactor Tasks'; echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'; echo 'Features: Adaptive lifecycle | Git worktrees | Anti-slop | Pickle Jar'; fi",
