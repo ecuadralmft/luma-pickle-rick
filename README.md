@@ -305,29 +305,41 @@ mkdir ~/test-project && cd ~/test-project && git init
 kiro-cli chat --agent pickle-rick "Build a Python CLI that converts CSV to JSON."
 ```
 
-#### Windows (WSL / Ubuntu on Windows)
+#### Windows (WSL / Ubuntu on Windows) — Recommended
 
-Pickle Rick runs inside WSL (Windows Subsystem for Linux). All commands are the same — run them in your WSL terminal, not PowerShell or CMD.
+Pickle Rick on Windows runs through WSL (Windows Subsystem for Linux). Open your WSL terminal (search "Ubuntu" in Start menu, or run `wsl` from PowerShell).
 
+**Using a WSL-native project folder (best performance):**
 ```bash
-# Open WSL terminal first (search "Ubuntu" in Start menu, or run: wsl)
-
 cd ~/my-project
 git init
 kiro-cli chat --agent pickle-rick
 ```
 
-Full autonomy:
+**Accessing a Windows folder from WSL (works with OneDrive, Desktop, etc.):**
 ```bash
-cd ~/my-project && git init
+# Windows paths are available under /mnt/c/ — always quote paths with spaces
+cd "/mnt/c/Users/YourName/OneDrive - Company/Projects/my-project"
+git init
 kiro-cli chat --agent pickle-rick --trust-all-tools
 ```
 
-> **Note:** If your project lives on the Windows filesystem (e.g., `/mnt/c/Users/you/project`), performance will be slower than using the native WSL filesystem (`~/my-project`). For best results, keep projects inside WSL's home directory.
+Full autonomy from a Windows folder:
+```bash
+cd "/mnt/c/Users/YourName/Documents/my-project"
+git init
+kiro-cli chat --agent pickle-rick --trust-all-tools
+```
+
+> **⚠️ Windows paths in WSL:**
+> - Windows drives are mounted at `/mnt/c/`, `/mnt/d/`, etc.
+> - **Always quote paths with spaces:** `cd "/mnt/c/Users/You/OneDrive - Company/folder"`
+> - Performance is slower on `/mnt/c/` than WSL-native `~/` paths — for large projects, consider cloning into `~/`
+> - OneDrive folders work fine — just use the full `/mnt/c/` path with quotes
 
 #### Windows (PowerShell — native, no WSL)
 
-If kiro-cli is installed natively on Windows (not through WSL):
+If kiro-cli is installed natively on Windows without WSL:
 
 ```powershell
 # IMPORTANT: Always quote paths that contain spaces
