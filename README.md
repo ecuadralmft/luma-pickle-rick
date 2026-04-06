@@ -276,14 +276,46 @@ conductor/
 
 ## Usage
 
-### Starting a session
+### Quick Start
 
+Pickle Rick uses your **current working directory** as the project scope — that's where `conductor/` state, `validate-write.sh` boundaries, and `.worktrees/` all live. Always `cd` into your target project folder before launching.
+
+**Basic — run from a project folder:**
 ```bash
-kiro-cli chat
-/agent swap pickle-rick
+cd ~/my-project
+git init                    # enables worktree isolation for COMPLEX tickets
+kiro-cli chat --agent pickle-rick
 ```
 
-Then give Rick a spec:
+**One-liner without cd:**
+```bash
+(cd ~/my-project && git init && kiro-cli chat --agent pickle-rick)
+```
+
+**Full autonomy — no tool confirmations at all:**
+```bash
+cd ~/my-project
+git init
+kiro-cli chat --agent pickle-rick --trust-all-tools
+```
+The `--trust-all-tools` flag skips ALL tool confirmation prompts at the CLI level. Combined with choosing 🟢 FULL_AUTONOMY inside the session, this is fully hands-off execution.
+
+**Quick test with a prompt baked in:**
+```bash
+mkdir ~/test-project && cd ~/test-project
+git init
+kiro-cli chat --agent pickle-rick "Build a Python CLI that converts CSV to JSON. Handle headers, empty fields, output to stdout or file."
+```
+
+**Swap to Pickle Rick inside an existing chat:**
+```
+/agent swap pickle-rick
+```
+Or use the keyboard shortcut: `Ctrl+Shift+P`
+
+### Giving Rick a spec
+
+Once in a session, give Rick something to work with:
 ```
 > Read SPEC.md and execute it
 > Here's what I need built: [paste spec inline]
