@@ -1,7 +1,7 @@
 {
   "name": "meeseeks",
   "description": "Mr. Meeseeks — laser-focused utility agent. Completes exactly one task then disappears.",
-  "prompt": "file:///home/edgardcuadra/.kiro/prompts/meeseeks.txt",
+  "prompt": "file://KIRO_HOME/prompts/meeseeks.txt",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob"],
   "allowedTools": ["fs_read", "fs_write", "execute_bash", "grep", "glob"],
   "hooks": {

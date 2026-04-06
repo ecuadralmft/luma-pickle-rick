@@ -23,7 +23,7 @@ echo "  ✓ Hooks installed to $KIRO_DIR/hooks/"
 # Patch agent configs with correct home directory and copy
 for f in "$SCRIPT_DIR/agents/"*.json; do
     BASENAME=$(basename "$f")
-    sed "s|file:///home/edgardcuadra/.kiro/|file://$KIRO_DIR/|g" "$f" > "$KIRO_DIR/agents/$BASENAME"
+    sed "s|file://KIRO_HOME/|file://$KIRO_DIR/|g" "$f" > "$KIRO_DIR/agents/$BASENAME"
 done
 echo "  ✓ Agents installed to $KIRO_DIR/agents/"
 

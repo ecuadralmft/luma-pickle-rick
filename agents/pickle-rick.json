@@ -1,7 +1,7 @@
 {
   "name": "pickle-rick",
   "description": "Pickle Rick v2 — multi-agent orchestrator with full lifecycle engine. Reads specs, decomposes into tickets, delegates to themed agents, monitors quality.",
-  "prompt": "file:///home/edgardcuadra/.kiro/prompts/pickle-rick.txt",
+  "prompt": "file://KIRO_HOME/prompts/pickle-rick.txt",
   "tools": ["fs_read", "fs_write", "grep", "glob", "execute_bash", "use_subagent", "delegate"],
   "allowedTools": ["fs_read", "grep", "glob"],
   "toolsSettings": {

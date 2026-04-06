@@ -1,7 +1,7 @@
 {
   "name": "summer",
   "description": "Summer Smith — confident QA engineer. Writes tests, finds edge cases, validates behavior.",
-  "prompt": "file:///home/edgardcuadra/.kiro/prompts/summer.txt",
+  "prompt": "file://KIRO_HOME/prompts/summer.txt",
   "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob"],
   "allowedTools": ["fs_read", "fs_write", "execute_bash", "grep", "glob"],
   "hooks": {
