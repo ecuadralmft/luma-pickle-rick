@@ -159,6 +159,73 @@ A `preToolUse` hook (`guard-delete.sh`) intercepts any bash command containing `
 
 ---
 
+## The Conductor System
+
+The `conductor/` directory is Pickle Rick's brain on disk — the persistent state engine that powers the entire orchestration lifecycle. It's created automatically in your project's working directory when Rick starts a session.
+
+### What the Conductor Does
+
+| Capability | File | Description |
+|------------|------|-------------|
+| **Project Detection** | `conductor/project-context.md` | Auto-scans workspace on first run — detects language, framework, dependencies, test runner, CI/CD config. Included in every subagent's context so workers understand the codebase. |
+| **PRD Drafting** | `conductor/prd.md` | When Rick detects a vague spec, he interrogates the user and produces a structured PRD (problem statement, objectives, scope, CUJs, functional requirements, risks). Skipped for clear specs. |
+| **Ticket Registry** | `conductor/tracks.md` | Human-readable ticket board with status markers (`[ ]` pending, `[~]` in progress, `[x]` done, `[!]` blocked), complexity tags, retry counts, and phase groupings. |
+| **Session State** | `conductor/state.json` | Machine-readable state — session ID, timestamps, permission mode, per-ticket metadata (status, lifecycle phase, worktree branch, artifact paths), phase completion tracking, and compliance scores. |
+| **Per-Ticket Research** | `conductor/tickets/[id]/research.md` | Morty's codebase analysis for COMPLEX tickets — documents what exists with file:line references, data flows, constraints, and open questions. Strictly observational (what IS, not what SHOULD BE). |
+| **Per-Ticket Plans** | `conductor/tickets/[id]/plan.md` | Implementation plan with specific files to modify, step-by-step changes with checkboxes, scope boundaries (in/out), and verification commands. Rick reviews for specificity before approving. |
+| **Test Results** | `conductor/tickets/[id]/test-results.md` | Summer's verdict — PASS/FAIL, individual test results, edge cases tested, Slop Score (0–5), and slop findings with file:line references for Rick's refactor audit. |
+| **Task Queue** | `conductor/jar/task-NNN.json` | Pickle Jar — saved specs with priority, status (queued/running/done/failed), and timestamps. Batch-executed sequentially on "open the jar". |
+| **Spec Compliance** | `conductor/state.json` (compliance field) | After all tickets resolve, Rick re-reads the original spec and checks every requirement for traceability, completion, and correctness. Gaps trigger fix tickets. |
+
+### Conductor Lifecycle
+
+```
+User gives spec
+    │
+    ▼
+┌─────────────────────────┐
+│ Project Context Scan     │──→ conductor/project-context.md
+│ (auto, first run only)   │
+└────────────┬────────────┘
+             ▼
+┌─────────────────────────┐
+│ PRD Phase (if vague)     │──→ conductor/prd.md
+│ Interrogate → Draft      │
+└────────────┬────────────┘
+             ▼
+┌─────────────────────────┐
+│ Decompose into Tickets   │──→ conductor/tracks.md
+│ Classify SIMPLE/COMPLEX  │──→ conductor/state.json
+└────────────┬────────────┘
+             ▼
+┌─────────────────────────┐    ┌──────────────────────────────┐
+│ Execute Tickets          │──→ │ Per COMPLEX ticket:           │
+│ (waves, by phase)        │    │  conductor/tickets/[id]/      │
+│                          │    │    research.md → plan.md       │
+│                          │    │    → implement → test-results  │
+└────────────┬────────────┘    └──────────────────────────────┘
+             ▼
+┌─────────────────────────┐
+│ Final Compliance Check   │──→ conductor/state.json (compliance)
+│ Spec vs Implementation   │
+└────────────┬────────────┘
+             ▼
+┌─────────────────────────┐
+│ Report + Artifact        │──→ Ask: keep audit trail or clean up?
+│ Retention Prompt         │
+└─────────────────────────┘
+```
+
+### Session Resume
+
+The conductor persists across sessions. If you quit mid-execution and come back, Rick's `agentSpawn` hook detects `conductor/state.json`, displays the current ticket board, and offers to resume where you left off. No work is lost.
+
+### Artifact Retention
+
+After completion, Rick asks: "Want me to keep the audit trail (`conductor/tickets/`) or clean it up?" The research, plans, and test results serve as a full audit trail of every decision made during the session.
+
+---
+
 ## Directory Structure
 
 ```
@@ -197,6 +264,7 @@ conductor/
 │   └── meeseeks.txt
 ├── hooks/
 │   ├── validate-write.sh              # preToolUse: block out-of-scope writes
+│   ├── guard-delete.sh                # preToolUse: file deletion guard per autonomy mode
 │   ├── audit-output.sh                # postToolUse: log tool usage
 │   ├── turn-check.sh                  # stop: flag TODOs, FIXMEs, uncertainty
 │   └── audit.log                      # Auto-generated audit trail
