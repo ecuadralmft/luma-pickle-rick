@@ -280,38 +280,77 @@ conductor/
 
 Pickle Rick uses your **current working directory** as the project scope — that's where `conductor/` state, `validate-write.sh` boundaries, and `.worktrees/` all live. Always `cd` into your target project folder before launching.
 
-**Basic — run from a project folder:**
+#### macOS / Linux
+
 ```bash
 cd ~/my-project
 git init                    # enables worktree isolation for COMPLEX tickets
 kiro-cli chat --agent pickle-rick
 ```
 
-**One-liner without cd:**
+One-liner:
 ```bash
 (cd ~/my-project && git init && kiro-cli chat --agent pickle-rick)
 ```
 
-**Full autonomy — no tool confirmations at all:**
+Full autonomy (no tool confirmations):
 ```bash
-cd ~/my-project
-git init
+cd ~/my-project && git init
 kiro-cli chat --agent pickle-rick --trust-all-tools
 ```
-The `--trust-all-tools` flag skips ALL tool confirmation prompts at the CLI level. Combined with choosing 🟢 FULL_AUTONOMY inside the session, this is fully hands-off execution.
 
-**Quick test with a prompt baked in:**
+Quick test with inline prompt:
 ```bash
-mkdir ~/test-project && cd ~/test-project
-git init
-kiro-cli chat --agent pickle-rick "Build a Python CLI that converts CSV to JSON. Handle headers, empty fields, output to stdout or file."
+mkdir ~/test-project && cd ~/test-project && git init
+kiro-cli chat --agent pickle-rick "Build a Python CLI that converts CSV to JSON."
 ```
 
-**Swap to Pickle Rick inside an existing chat:**
+#### Windows (WSL / Ubuntu on Windows)
+
+Pickle Rick runs inside WSL (Windows Subsystem for Linux). All commands are the same — run them in your WSL terminal, not PowerShell or CMD.
+
+```bash
+# Open WSL terminal first (search "Ubuntu" in Start menu, or run: wsl)
+
+cd ~/my-project
+git init
+kiro-cli chat --agent pickle-rick
+```
+
+Full autonomy:
+```bash
+cd ~/my-project && git init
+kiro-cli chat --agent pickle-rick --trust-all-tools
+```
+
+> **Note:** If your project lives on the Windows filesystem (e.g., `/mnt/c/Users/you/project`), performance will be slower than using the native WSL filesystem (`~/my-project`). For best results, keep projects inside WSL's home directory.
+
+#### Windows (PowerShell — native, no WSL)
+
+If kiro-cli is installed natively on Windows (not through WSL):
+
+```powershell
+cd $HOME\my-project
+git init
+kiro-cli chat --agent pickle-rick
+```
+
+Full autonomy:
+```powershell
+cd $HOME\my-project; git init
+kiro-cli chat --agent pickle-rick --trust-all-tools
+```
+
+> **Note:** The shell hooks (`guard-delete.sh`, `validate-write.sh`, etc.) are bash scripts. On native Windows without WSL, hooks require Git Bash or a bash-compatible shell in your PATH. WSL is the recommended approach for Windows users.
+
+#### Swap to Pickle Rick inside an existing chat
+
 ```
 /agent swap pickle-rick
 ```
 Or use the keyboard shortcut: `Ctrl+Shift+P`
+
+The `--trust-all-tools` flag skips ALL tool confirmation prompts at the CLI level. Combined with choosing 🟢 FULL_AUTONOMY inside the session, this is fully hands-off execution.
 
 ### Giving Rick a spec
 
@@ -346,6 +385,44 @@ If you quit mid-session, Rick detects `conductor/tracks.md` and `conductor/state
 /agent swap jerry       # Scaffolding
 /agent swap meeseeks    # Utility tasks
 ```
+
+---
+
+## Installation
+
+### Prerequisites
+- [Kiro CLI](https://kiro.dev) installed
+- `git` installed
+- `python3` installed (used by hooks for JSON parsing)
+
+### macOS / Linux
+
+```bash
+git clone https://github.com/ecuadralmft/luma-pickle-rick.git
+cd luma-pickle-rick
+./install.sh
+```
+
+### Windows (WSL / Ubuntu on Windows) — Recommended
+
+```bash
+# Run inside your WSL terminal
+git clone https://github.com/ecuadralmft/luma-pickle-rick.git
+cd luma-pickle-rick
+./install.sh
+```
+
+### Windows (PowerShell — native, no WSL)
+
+```powershell
+git clone https://github.com/ecuadralmft/luma-pickle-rick.git
+cd luma-pickle-rick
+bash install.sh    # requires Git Bash or bash in PATH
+```
+
+> **Note:** The hooks (`guard-delete.sh`, `validate-write.sh`, etc.) are bash scripts. On native Windows without WSL, you need Git Bash or a bash-compatible shell in your PATH. WSL is the recommended approach for Windows users.
+
+The installer copies agents, prompts, and hooks to `~/.kiro/` and enables the required settings.
 
 ---
 
