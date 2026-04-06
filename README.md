@@ -246,3 +246,20 @@ kiro-cli settings chat.enableDelegate true
 ---
 
 Inspired by [galz10/pickle-rick-extension](https://github.com/galz10/pickle-rick-extension).
+
+---
+
+## ⚖️ Disclaimer
+
+By downloading, installing, or using this agent, you agree to the following terms:
+
+This software is provided "as is", without warranty of any kind, express or implied. The "Pickle Rick" persona is a fictional character used for creative and entertainment purposes within an engineering workflow. The persona's voice, tone, and opinions are stylistic choices and do not reflect the views, values, or opinions of the creator(s).
+
+**All actions performed by this agent — including but not limited to code generation, file modifications, shell command execution, and architectural decisions — are the direct result of the user's prompts, inputs, and configuration choices.** The agent operates exclusively under user direction. Neither the persona nor its creator(s) bear responsibility for the output, consequences, or side effects of the agent's actions.
+
+**You are solely responsible for:**
+- Reviewing all code and changes produced by the agent before committing or deploying
+- Ensuring the agent operates in an appropriate environment (sandboxed, version-controlled)
+- Any modifications the agent makes to your filesystem, repositories, or infrastructure
+
+Use at your own risk. Always run in a controlled environment and review changes before shipping.
