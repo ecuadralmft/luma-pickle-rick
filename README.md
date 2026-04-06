@@ -1,248 +1,248 @@
-# 🥒 Pickle Rick Multi-Agent Orchestrator
+# 🥒 Pickle Rick v2 — Multi-Agent Orchestrator
 
-A reusable, persona-driven multi-agent orchestrator for [Kiro CLI](https://kiro.dev). Pickle Rick reads any spec document, decomposes it into phased tickets, delegates work to a themed Rick & Morty agent crew, iteratively verifies quality, and produces a spec compliance report — all with proactive monitoring via hooks.
-
-Inspired by the [Gemini CLI Conductor extension](https://github.com/gemini-cli-extensions/conductor) and the [persona extension pattern](https://aipositive.substack.com/p/from-tool-to-teammate-crafting-ai), adapted natively for Kiro's agent + subagent + hooks architecture.
+A persona-driven multi-agent orchestrator for [Kiro CLI](https://kiro.dev) with a full engineering lifecycle engine. Pickle Rick reads any spec, decomposes it into tickets, classifies complexity, runs adaptive per-ticket lifecycles (research → plan → implement → verify → refactor), enforces anti-slop rules, isolates work in git worktrees, and doesn't stop until the spec is fully implemented and verified.
 
                                                                     ᵇʸ ᵉᵈᵈⁱᵉ
 
-## Installation
-
-```bash
-git clone https://github.com/ecuadralmft/luma-pickle-rick.git
-cd luma-pickle-rick
-./install.sh
-```
-
-The installer copies agents, prompts, and hooks to `~/.kiro/` (global scope — works across all workspaces), patches file paths for your system, and enables the required settings.
-
-## Quick Start
-
-```bash
-# 1. Restart Kiro CLI (settings need a fresh session)
-kiro-cli chat
-
-# 2. Switch to Pickle Rick
-/agent swap pickle-rick
-# or press Ctrl+Shift+P
-
-# 3. Point at any spec document
-> Read SPEC.md and execute it
-```
-
-## Invoking Pickle Rick
-
-### Option 1: Slash Command
-```
-/agent swap pickle-rick
-```
-
-### Option 2: Keyboard Shortcut
-Press `Ctrl+Shift+P` during any Kiro CLI session to toggle Pickle Rick on/off.
-
-### Option 3: Set as Default Agent
-```bash
-kiro-cli settings chat.defaultAgent pickle-rick
-```
-
-### Invoking Worker Agents Directly
-```
-/agent swap morty       # or Ctrl+Shift+1 — Implementation
-/agent swap summer      # or Ctrl+Shift+2 — Testing/QA
-/agent swap beth        # or Ctrl+Shift+3 — Documentation
-/agent swap jerry       # or Ctrl+Shift+4 — Scaffolding
-/agent swap meeseeks    # or Ctrl+Shift+5 — Utility tasks
-```
-
-### Example Prompts
-```
-> Read SPEC.md and execute it
-> Read docs/requirements.md and build it
-> Here's what I need built: [paste spec inline]
-> Check status on the current work
-```
+---
 
 ## Agent Roster
 
-| Agent | Shortcut | Role | Persona |
-|-------|----------|------|---------|
-| 🥒 pickle-rick | Ctrl+Shift+P | Orchestrator — reads specs, creates tickets, delegates, monitors | Brash genius scientist |
-| 🫤 morty | Ctrl+Shift+1 | Implementation — writes functions, modules, business logic | Nervous but capable coder |
-| ☀️ summer | Ctrl+Shift+2 | Testing/QA — writes tests, finds edge cases | Blunt, critical QA engineer |
-| 🍷 beth | Ctrl+Shift+3 | Documentation — READMEs, code review, doc sync | Precise technical writer |
-| 😬 jerry | Ctrl+Shift+4 | Scaffolding — directory structures, config files | Enthusiastic about simple tasks |
-| ✋ meeseeks | Ctrl+Shift+5 | Utility — one-off tasks, quick fixes | Existentially urgent, does one thing |
+| Agent | Role | Persona |
+|-------|------|---------|
+| 🥒 pickle-rick | Orchestrator — reads specs, decomposes tickets, delegates, audits diffs, enforces quality | Brash genius scientist |
+| 🫤 morty | Implementation + Research/Plan — scans codebase, designs approach, writes code | Nervous but capable coder |
+| ☀️ summer | QA + Slop Detection — writes tests, scores slop (0–5), flags boilerplate | Blunt, critical QA engineer |
+| 🍷 beth | Documentation — READMEs, code review, doc sync | Precise technical writer |
+| 😬 jerry | Scaffolding — directory structures, config files, boilerplate | Enthusiastic about simple tasks |
+| ✋ meeseeks | Utility + Refactor — one-off tasks, surgical cleanup, extract-to-module | Existentially urgent, does one thing |
 
-## How It Works
+---
 
+## v2 Features
+
+### Adaptive Per-Ticket Lifecycle
+
+Rick classifies each ticket at decomposition time:
+
+**SIMPLE** (scaffolding, config, docs, one-liners):
 ```
-You ──► SPEC.md ──► 🥒 Pickle Rick
-                        │
-                        ├─ 1. Scans workspace (language, framework, structure)
-                        ├─ 2. Reads spec, decomposes into phased tickets
-                        ├─ 3. Writes conductor/tracks.md (persistent state)
-                        ├─ 4. Permission checkpoint (you pick trust level)
-                        │
-                        ├─ Phase 1: 😬 Jerry ── scaffolding
-                        │     └─ ✅ Phase verification
-                        ├─ Phase 2: 🫤 Morty ── implementation
-                        │     ├─ ☀️ Summer verifies each ticket
-                        │     ├─ 🔄 Retry loop (max 3) on failures
-                        │     └─ ✅ Phase verification
-                        ├─ Phase 3: ☀️ Summer ── additional test suites
-                        │     └─ ✅ Phase verification
-                        ├─ Phase 4: 🍷 Beth ── documentation + doc sync
-                        │     └─ ✅ Phase verification
-                        │
-                        ├─ 📋 Final spec compliance review
-                        └─ 📊 Damage report
+Assign → Execute → Verify → Done
 ```
 
-## Orchestration Features
+**COMPLEX** (new features, refactors, integrations, business logic):
+```
+Research → Plan → Implement → Verify → Refactor → Done
+```
 
-### Permission System
-Before executing any work, Pickle Rick asks you to choose a trust level:
+Classification heuristic:
+- SIMPLE: scaffolding/docs/utility phase, short description, no cross-ticket dependencies
+- COMPLEX: implementation phase, new business logic, API changes, data model changes, requires tests
+
+### Triggered PRD Phase
+
+Rick evaluates spec clarity before decomposing. If the spec is vague (< 5 sentences, contains "improve"/"fix"/"make better" without specifics, lacks acceptance criteria, or references multiple unrelated features), Rick interrogates you with targeted questions and drafts a PRD to `conductor/prd.md`.
+
+Skipped when the spec is detailed, already contains acceptance criteria, or you say "skip PRD".
+
+### Dual Session State
+
+Two files, always in sync:
+
+- `conductor/tracks.md` — human-readable ticket registry with complexity tags (`[SIMPLE]`/`[COMPLEX]`), lifecycle phase indicators, and retry counts
+- `conductor/state.json` — machine-readable session state with full ticket metadata, artifact paths, compliance scores, and worktree branches
+
+Both updated after every status change. `tracks.md` is rendered from `state.json`.
+
+### Anti-Slop Enforcement
+
+Three layers:
+
+1. **Morty (codified rules)** — no obvious comments, no `any`/`unknown` types, no defensive bloat, no "just in case" parameters, merge functions that should be one, prefer composition over inheritance
+2. **Summer (slop scoring)** — flags AI-generated boilerplate, redundant comments, unnecessary abstractions, dead code. Reports a Slop Score (0–5) in every test report
+3. **Rick (diff audit)** — reads `git diff` after implementation, dispatches targeted meeseeks tasks for each cleanup item found
+
+### Rick-Directed Refactor
+
+After morty implements and summer verifies (PASS):
+
+1. Rick reads `git diff` for the ticket
+2. Identifies slop: redundant comments, mergeable functions, `any` types, dead code, naming issues
+3. Dispatches atomic meeseeks tasks — one change, one file, done
+4. Summer re-verifies after cleanup to catch regressions
+5. If cleanup breaks tests, cleanup is reverted (implementation preserved)
+
+Skipped when: slop score is 0, ticket is SIMPLE, or diff is < 20 lines.
+
+### Git Worktree Isolation
+
+Each COMPLEX ticket runs in its own git worktree:
+
+```bash
+git worktree add .worktrees/TICKET-001 -b pickle/TICKET-001
+```
+
+- SIMPLE tickets run in the main tree
+- On success: merge back with `--no-ff`, remove worktree and branch
+- On blocked: remove worktree without merging
+- Falls back to main-tree execution if git is not initialized
+
+Subagents receive `WORKTREE_PATH` in their context for COMPLEX tickets.
+
+### Pickle Jar
+
+Task queue for saving specs and batch-executing later.
+
+| Command | What it does |
+|---------|-------------|
+| "jar this" / "save for later" | Saves current spec to `conductor/jar/task-NNN.json` with status `queued` |
+| "open the jar" / "night shift" | Executes all queued tasks sequentially, each with its own full orchestration cycle |
+| "jar status" | Lists all tasks with their status |
+
+Tasks are priority-sorted (1 = highest), with FIFO tiebreaker for equal priorities.
+
+### Per-Ticket Artifacts
+
+COMPLEX tickets produce structured artifacts:
+
+- `conductor/tickets/[id]/research.md` — what exists, file:line references, data flows, constraints
+- `conductor/tickets/[id]/plan.md` — specific files to modify, step-by-step changes, verification commands
+- `conductor/tickets/[id]/test-results.md` — verdict, slop score, test results, edge cases
+
+SIMPLE tickets produce no artifacts.
+
+### God Complex Protocol
+
+Morty doesn't hack workarounds — he invents solutions:
+- Missing utility? Create it as a proper module, not an inline hack
+- Trivial dependency? Write it yourself
+- Every invented utility must live in a sensible location, be exported, documented, and reusable
+
+Rick audits: inlined hacks get extracted to modules, trivial dependencies get flagged.
+
+### Completion Promise
+
+Rick doesn't stop until:
+- Every ticket is resolved (done or blocked)
+- Final compliance check passes against the original spec
+- Any compliance gaps have been addressed or acknowledged
+
+If the compliance check finds gaps, Rick creates fix tickets and runs another round.
+
+---
+
+## Permission Modes
+
+Set by Rick at session start. Cascades to all subagents.
 
 | Mode | Behavior |
 |------|----------|
-| 🟢 **Full Autonomy** | Runs everything, trusts all agents, reports at the end |
-| 🟡 **Supervised** | Runs in batches per phase, shows progress, asks to continue |
-| 🔴 **Manual** | Shows each ticket before delegating, waits for your greenlight |
+| 🟢 FULL_AUTONOMY | Runs everything, reports at the end. Fix tickets created automatically. |
+| 🟡 SUPERVISED | Runs in batches per phase, shows progress, asks to continue. |
+| 🔴 MANUAL | Shows each ticket before delegating, waits for approval. |
 
-The chosen permission mode **cascades to all subagents** — workers adjust their verbosity and confirmation behavior accordingly.
+---
 
-### Iterative Verification Loop
-Every implementation ticket follows this cycle:
-1. **Morty** writes the code
-2. **Summer** verifies against acceptance criteria → PASS or FAIL
-3. On FAIL: Morty gets re-delegated with failure details (max 3 retries)
-4. After 3 failures: ticket marked **blocked**, git revert offered
-
-### Phase Verification Checkpoints
-After all tickets in a phase complete, Pickle Rick verifies the phase as a whole:
-- **Scaffolding**: checks directories/files exist
-- **Implementation**: checks code files exist, runs basic lint/compile
-- **Testing**: checks tests ran, reports pass/fail counts
-- **Documentation**: checks doc files exist and reference correct modules
-
-### Persistent Tracks (Pause/Resume)
-Ticket state is written to `conductor/tracks.md` in your workspace:
-```markdown
-# 🥒 Pickle Rick — Track Registry
-## Tickets
-- [x] **#1 — Project scaffolding** | jerry | Phase: scaffolding
-- [~] **#2 — Core module** | morty | Phase: implementation
-- [ ] **#3 — Unit tests** | summer | Phase: testing
-```
-If you quit mid-session and come back, Pickle Rick detects the file and offers to resume.
-
-### Project Context Scan
-On first run in a workspace, Pickle Rick auto-detects:
-- Language and framework (from package.json, requirements.txt, Cargo.toml, etc.)
-- Existing project structure
-- Dependencies and test framework
-- CI/CD configuration
-
-This context is written to `conductor/project-context.md` and passed to every subagent so workers match your project's conventions.
-
-### Final Spec Compliance Review
-After all tickets complete, Pickle Rick re-reads the original spec and produces:
-
-| Requirement | Ticket | Status | Compliant? |
-|-------------|--------|--------|------------|
-| CSV input   | #2     | ✅ done | ✅ Yes     |
-| Rate limit  | #3     | ✅ done | ⚠️ Partial |
-| Retry logic | #4     | ❌ blocked | ❌ No   |
-
-With actionable recommendations for any gaps.
-
-### Git-Aware Revert
-When a ticket is blocked after 3 retries, Pickle Rick:
-1. Finds commits made during that ticket's execution
-2. Asks if you want to revert them (unless Full Autonomy)
-3. Runs `git revert` to clean up
-
-### Doc Sync
-Beth (documentation agent) automatically updates README.md and project-context.md to reflect what was actually built — no manual doc maintenance needed.
-
-## Hooks (Guardrails)
-
-| Hook | Type | What It Does |
-|------|------|-------------|
-| `validate-write.sh` | preToolUse | Blocks `fs_write` outside the project directory (exit 2) |
-| `audit-output.sh` | postToolUse | Logs tool name + result to `~/.kiro/hooks/audit.log` |
-| `turn-check.sh` | stop | Warns if response contains TODO, FIXME, or uncertainty |
-
-## Workspace Artifacts
-
-When Pickle Rick runs in a workspace, it creates:
-```
-your-project/
-├── conductor/
-│   ├── tracks.md            # Ticket registry (source of truth)
-│   └── project-context.md   # Auto-detected project context
-├── SPEC.md                  # Your input spec (you provide this)
-└── ... (your project files)
-```
-
-## Adding a New Worker Agent
-
-1. Create a prompt file: `~/.kiro/prompts/your-agent.txt`
-   - Include VOICE, EXPERTISE, CONSTRAINTS, PERMISSION RULES, PROJECT CONTEXT, SCOPE ENFORCEMENT, and OUTPUT FORMAT sections
-2. Create an agent config: `~/.kiro/agents/your-agent.json`
-3. Add the agent name to `pickle-rick.json` → `toolsSettings.subagent.availableAgents` and `trustedAgents`
-4. Validate: `kiro-cli agent validate --path ~/.kiro/agents/your-agent.json`
-
-## File Structure
+## Directory Structure
 
 ```
+conductor/
+├── state.json                          # Machine-readable session state
+├── tracks.md                           # Human-readable ticket registry
+├── prd.md                              # PRD (created if spec is vague)
+├── project-context.md                  # Auto-detected project context
+├── jar/
+│   └── task-NNN.json                   # Queued tasks (pickle jar)
+└── tickets/
+    ├── TICKET-001/
+    │   ├── research.md                 # Codebase research (COMPLEX only)
+    │   ├── plan.md                     # Implementation plan (COMPLEX only)
+    │   └── test-results.md             # Test verdict + slop score
+    └── TICKET-002/
+        └── ...
+
+.worktrees/
+└── TICKET-001/                         # Git worktree (COMPLEX tickets only)
+
 ~/.kiro/
 ├── agents/
-│   ├── pickle-rick.json    # Orchestrator
-│   ├── morty.json          # Implementation
-│   ├── summer.json         # Testing/QA
-│   ├── beth.json           # Documentation
-│   ├── jerry.json          # Scaffolding
-│   └── meeseeks.json       # Utility
+│   ├── pickle-rick.json
+│   ├── morty.json
+│   ├── summer.json
+│   ├── beth.json
+│   ├── jerry.json
+│   └── meeseeks.json
 ├── prompts/
-│   ├── pickle-rick.txt     # Orchestrator persona + orchestration logic
-│   ├── morty.txt           # Morty persona
-│   ├── summer.txt          # Summer persona
-│   ├── beth.txt            # Beth persona + doc sync
-│   ├── jerry.txt           # Jerry persona
-│   └── meeseeks.txt        # Meeseeks persona
+│   ├── pickle-rick.txt
+│   ├── morty.txt
+│   ├── summer.txt
+│   ├── beth.txt
+│   ├── jerry.txt
+│   └── meeseeks.txt
 ├── hooks/
-│   ├── validate-write.sh   # preToolUse: block out-of-scope writes
-│   ├── audit-output.sh     # postToolUse: log tool usage
-│   ├── turn-check.sh       # stop: flag red flags
-│   └── audit.log           # Auto-generated audit trail
+│   ├── validate-write.sh              # preToolUse: block out-of-scope writes
+│   ├── audit-output.sh                # postToolUse: log tool usage
+│   ├── turn-check.sh                  # stop: flag TODOs, FIXMEs, uncertainty
+│   └── audit.log                      # Auto-generated audit trail
 └── settings/
-    └── cli.json            # enableSubagent + enableDelegate
+    └── cli.json
 ```
 
-## Required Settings
+---
 
+## Usage
+
+### Starting a session
+
+```bash
+kiro-cli chat
+/agent swap pickle-rick
+```
+
+Then give Rick a spec:
+```
+> Read SPEC.md and execute it
+> Here's what I need built: [paste spec inline]
+```
+
+Rick will: evaluate spec clarity → (optionally) run PRD phase → decompose into tickets → classify complexity → execute lifecycle → verify compliance → done.
+
+### Pickle Jar commands
+
+```
+> Jar this                    # Save current spec for later
+> Add to jar                  # Same
+> Open the jar                # Execute all queued tasks
+> Night shift                 # Same
+> Jar status                  # List queued/running/done tasks
+```
+
+### Reconnecting
+
+If you quit mid-session, Rick detects `conductor/tracks.md` and `conductor/state.json` on next start and offers to resume where you left off.
+
+### Invoking agents directly
+
+```
+/agent swap morty       # Implementation
+/agent swap summer      # QA
+/agent swap beth        # Documentation
+/agent swap jerry       # Scaffolding
+/agent swap meeseeks    # Utility tasks
+```
+
+---
+
+## Configuration
+
+Agent configs live in `~/.kiro/agents/` (JSON). Persona prompts live in `~/.kiro/prompts/` (TXT).
+
+Required settings (enabled by `install.sh`):
 ```bash
 kiro-cli settings chat.enableSubagent true
 kiro-cli settings chat.enableDelegate true
 ```
 
-The `install.sh` script enables these automatically.
+---
 
-## Verifying the Installation
-
-```bash
-# List all agents — should show pickle-rick + 5 workers
-kiro-cli agent list
-
-# Validate a specific agent config
-kiro-cli agent validate --path ~/.kiro/agents/pickle-rick.json
-
-# Check hooks are working
-echo '{"hook_event_name":"preToolUse","cwd":"/tmp","tool_name":"fs_write","tool_input":{"path":"/etc/bad"}}' \
-  | ~/.kiro/hooks/validate-write.sh
-# Should print: 🥒 BLOCKED and exit code 2
-
-# View the audit trail after a session
-cat ~/.kiro/hooks/audit.log
-```
+Inspired by [galz10/pickle-rick-extension](https://github.com/galz10/pickle-rick-extension).
