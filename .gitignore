@@ -19,6 +19,5 @@
 !.kiro/settings/
 !.kiro/settings/mcp.json.example
 
-# Allow conductor (human-readable state only)
-!conductor/
-!conductor/tracks.md
+# Conductor state stays local (not pushed)
+# conductor/
