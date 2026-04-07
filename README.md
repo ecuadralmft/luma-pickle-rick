@@ -2,7 +2,7 @@
 
 A persona-driven multi-agent orchestrator for [Kiro CLI](https://kiro.dev) with a full engineering lifecycle engine. Pickle Rick reads any spec, decomposes it into tickets, classifies complexity, runs adaptive per-ticket lifecycles (research → plan → implement → verify → refactor), enforces anti-slop rules, isolates work in git worktrees, and doesn't stop until the spec is fully implemented and verified.
 
-                                                                    ᵇʸ ᵉᵈᵈⁱᵉ
+                                                                    ᵇʸ ᵉᵈᵍᵃʳᵈ
 
 ---
 
