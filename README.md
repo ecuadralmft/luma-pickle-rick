@@ -4,6 +4,8 @@ A persona-driven multi-agent orchestrator for [Kiro CLI](https://kiro.dev) with 
 
                                                                     ᵇʸ ᵉᵈᵍᵃʳᵈ
 
+**Repository:** [luma-pickle-rick](https://github.com/ecuadralmft/luma-pickle-rick)
+
 ---
 
 ## Agent Roster

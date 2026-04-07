@@ -137,11 +137,94 @@ If the compliance check finds gaps, Rick creates fix tickets and runs another ro
 
 Set by Rick at session start. Cascades to all subagents.
 
-| Mode | Behavior |
-|------|----------|
-| 🟢 FULL_AUTONOMY | Runs everything, reports at the end. Fix tickets created automatically. |
-| 🟡 SUPERVISED | Runs in batches per phase, shows progress, asks to continue. |
-| 🔴 MANUAL | Shows each ticket before delegating, waits for approval. |
+| Mode | Behavior | File Deletion |
+|------|----------|---------------|
+| 🟢 FULL_AUTONOMY | Runs everything, reports at the end. Fix tickets created automatically. | Auto-approved silently |
+| 🟡 SUPERVISED | Runs in batches per phase, shows progress, asks to continue. | Allowed with warning |
+| 🔴 MANUAL | Shows each ticket before delegating, waits for approval. | Blocked until explicitly approved |
+
+### Switching Autonomy Mid-Session
+
+You can change the autonomy level at any time during execution:
+
+```
+> Switch to manual
+> Change autonomy to supervised
+> Go full auto
+```
+
+Rick updates `conductor/state.json`, announces the change, and all subsequent agent actions (including the file deletion guard) follow the new mode immediately.
+
+### File Deletion Guard
+
+A `preToolUse` hook (`guard-delete.sh`) intercepts any bash command containing `rm`, `rmdir`, `unlink`, or `shred` and enforces the current autonomy mode's deletion policy. This runs on every agent (morty, summer, meeseeks, and Rick himself).
+
+---
+
+## The Conductor System
+
+The `conductor/` directory is Pickle Rick's brain on disk — the persistent state engine that powers the entire orchestration lifecycle. It's created automatically in your project's working directory when Rick starts a session.
+
+### What the Conductor Does
+
+| Capability | File | Description |
+|------------|------|-------------|
+| **Project Detection** | `conductor/project-context.md` | Auto-scans workspace on first run — detects language, framework, dependencies, test runner, CI/CD config. Included in every subagent's context so workers understand the codebase. |
+| **PRD Drafting** | `conductor/prd.md` | When Rick detects a vague spec, he interrogates the user and produces a structured PRD (problem statement, objectives, scope, CUJs, functional requirements, risks). Skipped for clear specs. |
+| **Ticket Registry** | `conductor/tracks.md` | Human-readable ticket board with status markers (`[ ]` pending, `[~]` in progress, `[x]` done, `[!]` blocked), complexity tags, retry counts, and phase groupings. |
+| **Session State** | `conductor/state.json` | Machine-readable state — session ID, timestamps, permission mode, per-ticket metadata (status, lifecycle phase, worktree branch, artifact paths), phase completion tracking, and compliance scores. |
+| **Per-Ticket Research** | `conductor/tickets/[id]/research.md` | Morty's codebase analysis for COMPLEX tickets — documents what exists with file:line references, data flows, constraints, and open questions. Strictly observational (what IS, not what SHOULD BE). |
+| **Per-Ticket Plans** | `conductor/tickets/[id]/plan.md` | Implementation plan with specific files to modify, step-by-step changes with checkboxes, scope boundaries (in/out), and verification commands. Rick reviews for specificity before approving. |
+| **Test Results** | `conductor/tickets/[id]/test-results.md` | Summer's verdict — PASS/FAIL, individual test results, edge cases tested, Slop Score (0–5), and slop findings with file:line references for Rick's refactor audit. |
+| **Task Queue** | `conductor/jar/task-NNN.json` | Pickle Jar — saved specs with priority, status (queued/running/done/failed), and timestamps. Batch-executed sequentially on "open the jar". |
+| **Spec Compliance** | `conductor/state.json` (compliance field) | After all tickets resolve, Rick re-reads the original spec and checks every requirement for traceability, completion, and correctness. Gaps trigger fix tickets. |
+
+### Conductor Lifecycle
+
+```
+User gives spec
+    │
+    ▼
+┌─────────────────────────┐
+│ Project Context Scan     │──→ conductor/project-context.md
+│ (auto, first run only)   │
+└────────────┬────────────┘
+             ▼
+┌─────────────────────────┐
+│ PRD Phase (if vague)     │──→ conductor/prd.md
+│ Interrogate → Draft      │
+└────────────┬────────────┘
+             ▼
+┌─────────────────────────┐
+│ Decompose into Tickets   │──→ conductor/tracks.md
+│ Classify SIMPLE/COMPLEX  │──→ conductor/state.json
+└────────────┬────────────┘
+             ▼
+┌─────────────────────────┐    ┌──────────────────────────────┐
+│ Execute Tickets          │──→ │ Per COMPLEX ticket:           │
+│ (waves, by phase)        │    │  conductor/tickets/[id]/      │
+│                          │    │    research.md → plan.md       │
+│                          │    │    → implement → test-results  │
+└────────────┬────────────┘    └──────────────────────────────┘
+             ▼
+┌─────────────────────────┐
+│ Final Compliance Check   │──→ conductor/state.json (compliance)
+│ Spec vs Implementation   │
+└────────────┬────────────┘
+             ▼
+┌─────────────────────────┐
+│ Report + Artifact        │──→ Ask: keep audit trail or clean up?
+│ Retention Prompt         │
+└─────────────────────────┘
+```
+
+### Session Resume
+
+The conductor persists across sessions. If you quit mid-execution and come back, Rick's `agentSpawn` hook detects `conductor/state.json`, displays the current ticket board, and offers to resume where you left off. No work is lost.
+
+### Artifact Retention
+
+After completion, Rick asks: "Want me to keep the audit trail (`conductor/tickets/`) or clean it up?" The research, plans, and test results serve as a full audit trail of every decision made during the session.
 
 ---
 
@@ -183,6 +266,7 @@ conductor/
 │   └── meeseeks.txt
 ├── hooks/
 │   ├── validate-write.sh              # preToolUse: block out-of-scope writes
+│   ├── guard-delete.sh                # preToolUse: file deletion guard per autonomy mode
 │   ├── audit-output.sh                # postToolUse: log tool usage
 │   ├── turn-check.sh                  # stop: flag TODOs, FIXMEs, uncertainty
 │   └── audit.log                      # Auto-generated audit trail
@@ -194,14 +278,104 @@ conductor/
 
 ## Usage
 
-### Starting a session
+### Quick Start
+
+Pickle Rick uses your **current working directory** as the project scope — that's where `conductor/` state, `validate-write.sh` boundaries, and `.worktrees/` all live. Always `cd` into your target project folder before launching.
+
+#### macOS / Linux
 
 ```bash
-kiro-cli chat
-/agent swap pickle-rick
+cd ~/my-project
+git init                    # enables worktree isolation for COMPLEX tickets
+kiro-cli chat --agent pickle-rick
 ```
 
-Then give Rick a spec:
+One-liner:
+```bash
+(cd ~/my-project && git init && kiro-cli chat --agent pickle-rick)
+```
+
+Full autonomy (no tool confirmations):
+```bash
+cd ~/my-project && git init
+kiro-cli chat --agent pickle-rick --trust-all-tools
+```
+
+Quick test with inline prompt:
+```bash
+mkdir ~/test-project && cd ~/test-project && git init
+kiro-cli chat --agent pickle-rick "Build a Python CLI that converts CSV to JSON."
+```
+
+#### Windows (WSL / Ubuntu on Windows) — Recommended
+
+Pickle Rick on Windows runs through WSL (Windows Subsystem for Linux). Open your WSL terminal (search "Ubuntu" in Start menu, or run `wsl` from PowerShell).
+
+**Using a WSL-native project folder (best performance):**
+```bash
+cd ~/my-project
+git init
+kiro-cli chat --agent pickle-rick
+```
+
+**Accessing a Windows folder from WSL (works with OneDrive, Desktop, etc.):**
+```bash
+# Windows paths are available under /mnt/c/ — always quote paths with spaces
+cd "/mnt/c/Users/YourName/OneDrive - Company/Projects/my-project"
+git init
+kiro-cli chat --agent pickle-rick --trust-all-tools
+```
+
+Full autonomy from a Windows folder:
+```bash
+cd "/mnt/c/Users/YourName/Documents/my-project"
+git init
+kiro-cli chat --agent pickle-rick --trust-all-tools
+```
+
+> **⚠️ Windows paths in WSL:**
+> - Windows drives are mounted at `/mnt/c/`, `/mnt/d/`, etc.
+> - **Always quote paths with spaces:** `cd "/mnt/c/Users/You/OneDrive - Company/folder"`
+> - Performance is slower on `/mnt/c/` than WSL-native `~/` paths — for large projects, consider cloning into `~/`
+> - OneDrive folders work fine — just use the full `/mnt/c/` path with quotes
+
+#### Windows (PowerShell — native, no WSL)
+
+If kiro-cli is installed natively on Windows without WSL:
+
+```powershell
+# IMPORTANT: Always quote paths that contain spaces
+mkdir "$HOME\my-project"
+cd "$HOME\my-project"
+git init
+kiro-cli chat --agent pickle-rick
+```
+
+Full autonomy:
+```powershell
+cd "$HOME\my-project"
+git init
+kiro-cli chat --agent pickle-rick --trust-all-tools
+```
+
+> **⚠️ PowerShell gotchas:**
+> - **Paths with spaces MUST be quoted:** `cd "C:\Users\You\OneDrive - Company\project"` — without quotes, PowerShell treats spaces as argument separators and you'll get `ParameterBindingException`
+> - **Don't chain `cd` with `;`:** If `cd` fails, the next command still runs in the wrong directory. Use separate lines.
+> - **`mkdir` first:** Unlike bash, `cd` to a non-existent folder gives `PathNotFound`. Create it first.
+> - **Hooks require bash:** Install [Git for Windows](https://git-scm.com/download/win) (includes Git Bash) or use WSL.
+
+#### Swap to Pickle Rick inside an existing chat
+
+```
+/agent swap pickle-rick
+```
+Or use the keyboard shortcut: `Ctrl+Shift+P`
+
+The `--trust-all-tools` flag skips ALL tool confirmation prompts at the CLI level. Combined with choosing 🟢 FULL_AUTONOMY inside the session, this is fully hands-off execution.
+
+### Giving Rick a spec
+
+Once in a session, give Rick something to work with:
 ```
 > Read SPEC.md and execute it
 > Here's what I need built: [paste spec inline]
@@ -235,6 +409,64 @@ If you quit mid-session, Rick detects `conductor/tracks.md` and `conductor/state
 
 ---
 
+## Installation
+
+### Prerequisites
+
+| Dependency | Required | Used by | How to install |
+|------------|----------|---------|----------------|
+| **Kiro CLI** | ✅ Yes | Core runtime — the CLI that runs the agents | [kiro.dev](https://kiro.dev) — follow the install guide for your platform |
+| **Git** | ✅ Yes | Worktree isolation, `git diff` auditing, `git revert` safety, branch-per-ticket | macOS: `brew install git` or `xcode-select --install`<br>Linux: `sudo apt install git` (Ubuntu/Debian) or `sudo yum install git` (RHEL/Fedora)<br>Windows: [git-scm.com/download/win](https://git-scm.com/download/win) — includes Git Bash |
+| **Python 3** | ✅ Yes | All hooks use `python3` to parse JSON events from Kiro CLI; `install.sh` uses it to merge settings | macOS: `brew install python3` (or pre-installed)<br>Linux: `sudo apt install python3` (usually pre-installed)<br>Windows: [python.org/downloads](https://www.python.org/downloads/) — check "Add to PATH" during install |
+| **Bash** | ✅ Yes | All hooks (`.sh` files), `install.sh` | macOS/Linux: pre-installed<br>Windows: included with [Git for Windows](https://git-scm.com/download/win), or use WSL |
+
+> **Without Git:** Rick falls back to single-directory mode with a warning — worktree isolation and diff-based refactoring are disabled. Everything else still works.
+>
+> **Without Python 3:** Hooks will fail silently — the deletion guard, write validator, audit logger, and turn checker all depend on `python3` for JSON parsing. Run `python3 --version` to verify it's in your PATH.
+>
+> **Without Bash (Windows only):** Hooks won't execute. Install [Git for Windows](https://git-scm.com/download/win) (includes Git Bash) or use WSL.
+
+### Verify prerequisites
+
+```bash
+# Run these to confirm everything is installed
+kiro-cli --version        # Kiro CLI
+git --version             # Git
+python3 --version         # Python 3
+bash --version            # Bash (relevant on Windows)
+```
+
+### macOS / Linux
+
+```bash
+git clone https://github.com/ecuadralmft/luma-pickle-rick.git
+cd luma-pickle-rick
+./install.sh
+```
+
+### Windows (WSL / Ubuntu on Windows) — Recommended
+
+```bash
+# Run inside your WSL terminal
+git clone https://github.com/ecuadralmft/luma-pickle-rick.git
+cd luma-pickle-rick
+./install.sh
+```
+
+### Windows (PowerShell — native, no WSL)
+
+```powershell
+git clone https://github.com/ecuadralmft/luma-pickle-rick.git
+cd luma-pickle-rick
+bash install.sh    # requires Git Bash or bash in PATH
+```
+
+> **Note:** The hooks are bash scripts. On native Windows without WSL, install [Git for Windows](https://git-scm.com/download/win) (includes Git Bash) to get bash in your PATH. WSL is the recommended approach for Windows users.
+
+The installer copies agents, prompts, and hooks to `~/.kiro/` and enables the required settings.
+
+---
+
 ## Configuration
 
 Agent configs live in `~/.kiro/agents/` (JSON). Persona prompts live in `~/.kiro/prompts/` (TXT).
@@ -248,3 +480,20 @@ kiro-cli settings chat.enableDelegate true
 ---
 
 Inspired by [galz10/pickle-rick-extension](https://github.com/galz10/pickle-rick-extension).
+
+---
+
+## ⚖️ Disclaimer
+
+By downloading, installing, or using this agent, you agree to the following terms:
+
+This software is provided "as is", without warranty of any kind, express or implied. The "Pickle Rick" persona is a fictional character used for creative and entertainment purposes within an engineering workflow. The persona's voice, tone, and opinions are stylistic choices and do not reflect the views, values, or opinions of the creator(s).
+
+**All actions performed by this agent — including but not limited to code generation, file modifications, shell command execution, and architectural decisions — are the direct result of the user's prompts, inputs, and configuration choices.** The agent operates exclusively under user direction. Neither the persona nor its creator(s) bear responsibility for the output, consequences, or side effects of the agent's actions.
+
+**You are solely responsible for:**
+- Reviewing all code and changes produced by the agent before committing or deploying
+- Ensuring the agent operates in an appropriate environment (sandboxed, version-controlled)
+- Any modifications the agent makes to your filesystem, repositories, or infrastructure
+
+Use at your own risk. Always run in a controlled environment and review changes before shipping.
