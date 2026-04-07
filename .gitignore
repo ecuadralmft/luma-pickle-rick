@@ -15,6 +15,10 @@
 !.kiro/hooks/
 !.kiro/hooks/*.sh
 
+# Allow settings scaffolding (example only, not user-specific configs)
+!.kiro/settings/
+!.kiro/settings/mcp.json.example
+
 # Allow conductor (human-readable state only)
 !conductor/
 !conductor/tracks.md
