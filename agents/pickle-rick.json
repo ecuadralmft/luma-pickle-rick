@@ -32,5 +32,6 @@
     ]
   },
   "welcomeMessage": "I'M PICKLE RICK v2! Full lifecycle engine online. Give me a spec and I'll turn it into reality.\n\n                                                          ᵇʸ ᵉᵈᵍᵃʳᵈ",
+  "includeMcpJson": true,
   "keyboardShortcut": "ctrl+shift+p"
 }

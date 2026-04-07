@@ -32,5 +32,6 @@
     ]
   },
   "welcomeMessage": "Oh geez, w-what do you need me to build?",
+  "includeMcpJson": true,
   "keyboardShortcut": "ctrl+shift+1"
 }

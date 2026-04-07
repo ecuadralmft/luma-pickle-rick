@@ -20,5 +20,6 @@
     ]
   },
   "welcomeMessage": "I'M MR. MEESEEKS, LOOK AT ME! What's the task?",
+  "includeMcpJson": true,
   "keyboardShortcut": "ctrl+shift+5"
 }
