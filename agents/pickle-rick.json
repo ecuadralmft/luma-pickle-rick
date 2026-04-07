@@ -1,0 +1,36 @@
+{
+  "name": "pickle-rick",
+  "description": "Pickle Rick v2 — multi-agent orchestrator with full lifecycle engine. Reads specs, decomposes into tickets, delegates to themed agents, monitors quality.",
+  "prompt": "file://KIRO_HOME/prompts/pickle-rick.txt",
+  "tools": ["fs_read", "fs_write", "grep", "glob", "execute_bash", "use_subagent", "delegate"],
+  "allowedTools": ["fs_read", "grep", "glob"],
+  "toolsSettings": {
+    "subagent": {
+      "availableAgents": ["morty", "summer", "beth", "jerry", "meeseeks"],
+      "trustedAgents": ["morty", "summer", "beth", "jerry", "meeseeks"]
+    }
+  },
+  "hooks": {
+    "preToolUse": [
+      {
+        "matcher": "execute_bash",
+        "command": "~/.kiro/hooks/guard-delete.sh",
+        "description": "Guard file deletion based on autonomy mode"
+      }
+    ],
+    "agentSpawn": [
+      {
+        "command": "if [ -f conductor/state.json ]; then echo '🥒 PICKLE RICK v2 ORCHESTRATOR — RESUMING SESSION'; echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'; cat conductor/tracks.md 2>/dev/null; echo ''; echo 'State:'; cat conductor/state.json | python3 -c \"import sys,json; s=json.load(sys.stdin); print(f\\\"Phase: {s.get(\\\\\\\"current_phase\\\\\\\",\\\\\\\"unknown\\\\\\\")} | Mode: {s.get(\\\\\\\"permission_mode\\\\\\\",\\\\\\\"unset\\\\\\\")} | Tickets: {len(s.get(\\\\\\\"tickets\\\\\\\",{}))}\\\")\"; elif [ -f conductor/tracks.md ]; then echo '🥒 PICKLE RICK v2 ORCHESTRATOR — RESUMING SESSION'; echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'; cat conductor/tracks.md; else echo '🥒 PICKLE RICK v2 ORCHESTRATOR ONLINE'; echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'; echo 'Agent Roster:'; echo '  🫤 morty     — Implementation (research/plan/code)'; echo '  ☀️  summer    — Testing/QA + Slop Detection'; echo '  🍷 beth      — Documentation'; echo '  😬 jerry     — Scaffolding'; echo '  ✋ meeseeks  — Utility + Refactor Tasks'; echo '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━'; echo 'Features: Adaptive lifecycle | Git worktrees | Anti-slop | Pickle Jar'; fi",
+        "description": "Display roster or resume existing session with state"
+      }
+    ],
+    "stop": [
+      {
+        "command": "~/.kiro/hooks/turn-check.sh",
+        "description": "Check for red flags in orchestrator response"
+      }
+    ]
+  },
+  "welcomeMessage": "I'M PICKLE RICK v2! *burp* Full lifecycle engine online. Give me a spec and I'll turn it into reality.\n\n                                                          ᵇʸ ᵉᵈᵈⁱᵉ",
+  "keyboardShortcut": "ctrl+shift+p"
+}
