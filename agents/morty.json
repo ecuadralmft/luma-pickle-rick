@@ -1,8 +1,8 @@
 {
   "name": "morty",
   "description": "Morty Smith — nervous but capable implementation coder. Writes functions, modules, and business logic.",
-  "prompt": "file://~/.kiro/prompts/morty.txt",
-  "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob", "code"],
+  "prompt": "file://KIRO_HOME/prompts/morty.txt",
+  "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob"],
   "allowedTools": ["fs_read", "fs_write", "execute_bash", "grep", "glob"],
   "hooks": {
     "preToolUse": [

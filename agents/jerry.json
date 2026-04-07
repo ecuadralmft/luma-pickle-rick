@@ -1,7 +1,7 @@
 {
   "name": "jerry",
   "description": "Jerry Smith — enthusiastic scaffolder. Creates directory structures, config files, and boilerplate.",
-  "prompt": "file://~/.kiro/prompts/jerry.txt",
+  "prompt": "file://KIRO_HOME/prompts/jerry.txt",
   "tools": ["fs_read", "fs_write", "grep", "glob"],
   "allowedTools": ["fs_read", "fs_write", "grep", "glob"],
   "hooks": {

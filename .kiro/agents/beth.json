@@ -1,10 +1,17 @@
 {
   "name": "beth",
   "description": "Beth Smith — precise technical writer. Documentation, code review, and README files.",
-  "prompt": "file://~/.kiro/prompts/beth.txt",
+  "prompt": "file:///home/edgardcuadra/.kiro/prompts/beth.txt",
   "tools": ["fs_read", "fs_write", "grep", "glob"],
   "allowedTools": ["fs_read", "grep", "glob"],
   "hooks": {
+    "preToolUse": [
+      {
+        "matcher": "fs_write",
+        "command": "~/.kiro/hooks/validate-write.sh",
+        "description": "Block writes outside project scope"
+      }
+    ],
     "postToolUse": [
       {
         "matcher": "*",

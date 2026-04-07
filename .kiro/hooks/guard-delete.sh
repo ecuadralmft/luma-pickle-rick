@@ -4,14 +4,14 @@
 # FULL_AUTONOMY: allow silently | SUPERVISED: warn but allow | MANUAL: block
 EVENT=$(cat)
 
-CMD=$(echo "$EVENT" | jq -r '.tool_input.command // empty')
+CMD=$(echo "$EVENT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('tool_input',{}).get('command',''))" 2>/dev/null)
 [ -z "$CMD" ] && exit 0
 
 echo "$CMD" | grep -qiE '\brm\b|rmdir|unlink|shred' || exit 0
 
-CWD=$(echo "$EVENT" | jq -r '.cwd // empty')
+CWD=$(echo "$EVENT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('cwd',''))" 2>/dev/null)
 STATE="${CWD:+$CWD/}conductor/state.json"
-MODE=$([ -f "$STATE" ] && jq -r '.permission_mode // "SUPERVISED"' "$STATE" || echo "SUPERVISED")
+MODE=$([ -f "$STATE" ] && python3 -c "import json; print(json.load(open('$STATE')).get('permission_mode','SUPERVISED'))" 2>/dev/null || echo "SUPERVISED")
 
 case "$MODE" in
     FULL_AUTONOMY)

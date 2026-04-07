@@ -18,9 +18,13 @@ for o in ops:
 [ -z "$CWD" ] && exit 0
 while IFS= read -r fp; do
     [ -z "$fp" ] && continue
+    # Resolve ~ to $HOME
+    fp="${fp/#\~/$HOME}"
+    # Resolve to absolute path
+    fp=$(realpath -m "$fp" 2>/dev/null) || continue
     case "$fp" in
         "$CWD"/*|"$CWD") ;;
-        /*) echo "🥒 BLOCKED: Write to '$fp' is outside project scope ($CWD)" >&2; exit 2 ;;
+        *) echo "🥒 BLOCKED: Write to '$fp' is outside project scope ($CWD)" >&2; exit 2 ;;
     esac
 done <<< "$PATHS"
 exit 0

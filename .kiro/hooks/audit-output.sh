@@ -10,7 +10,10 @@ r=e.get('tool_response',{})
 s=str(r.get('result',r))[:200]
 print(s)
 " 2>/dev/null)
-echo "[$(date -Iseconds)] $TOOL: $RESULT" >> "$LOG"
-# rotate: keep last 50 lines
-tail -n 50 "$LOG" > "$LOG.tmp" && mv "$LOG.tmp" "$LOG"
+LOCKFILE="$LOG.lock"
+(
+  flock 9
+  echo "[$(date -Iseconds)] $TOOL: $RESULT" >> "$LOG"
+  tail -n 50 "$LOG" > "$LOG.tmp" && mv "$LOG.tmp" "$LOG"
+) 9>"$LOCKFILE"
 exit 0

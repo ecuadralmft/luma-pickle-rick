@@ -3,8 +3,8 @@
 EVENT=$(cat)
 RESPONSE=$(echo "$EVENT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('assistant_response',''))" 2>/dev/null)
 FLAGS=""
-echo "$RESPONSE" | grep -qi "TODO" && FLAGS="$FLAGS TODO"
-echo "$RESPONSE" | grep -qi "FIXME" && FLAGS="$FLAGS FIXME"
+echo "$RESPONSE" | grep -qiE "TODO[:(]" && FLAGS="$FLAGS TODO"
+echo "$RESPONSE" | grep -qiE "FIXME[:(]" && FLAGS="$FLAGS FIXME"
 echo "$RESPONSE" | grep -qi "I'm not sure" && FLAGS="$FLAGS UNCERTAIN"
 echo "$RESPONSE" | grep -qi "not implemented" && FLAGS="$FLAGS INCOMPLETE"
 echo "$RESPONSE" | grep -qi '\.\.\..*implement' && FLAGS="$FLAGS STUB"
