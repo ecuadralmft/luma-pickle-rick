@@ -1,0 +1,20 @@
+# Ignore everything by default
+*
+
+# Allow project files
+!.gitignore
+!pickle-rick-v2-spec.md
+
+# Allow .kiro project files
+!.kiro/
+!.kiro/README-pickle-rick.md
+!.kiro/agents/
+!.kiro/agents/*.json
+!.kiro/prompts/
+!.kiro/prompts/*.txt
+!.kiro/hooks/
+!.kiro/hooks/*.sh
+
+# Allow conductor (human-readable state only)
+!conductor/
+!conductor/tracks.md

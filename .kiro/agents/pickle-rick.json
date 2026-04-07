@@ -1,0 +1,36 @@
+{
+  "name": "pickle-rick",
+  "description": "Pickle Rick v2 — multi-agent orchestrator with full lifecycle engine. Reads specs, decomposes into tickets, delegates to themed agents, monitors quality.",
+  "prompt": "file://~/.kiro/prompts/pickle-rick.txt",
+  "tools": ["fs_read", "fs_write", "grep", "glob", "execute_bash", "use_subagent", "delegate"],
+  "allowedTools": ["fs_read", "grep", "glob"],
+  "toolsSettings": {
+    "subagent": {
+      "availableAgents": ["morty", "summer", "beth", "jerry", "meeseeks"],
+      "trustedAgents": ["morty", "summer", "beth", "jerry", "meeseeks"]
+    }
+  },
+  "hooks": {
+    "preToolUse": [
+      {
+        "matcher": "execute_bash",
+        "command": "~/.kiro/hooks/guard-delete.sh",
+        "description": "Guard file deletion based on autonomy mode"
+      }
+    ],
+    "agentSpawn": [
+      {
+        "command": "~/.kiro/hooks/agent-spawn.sh",
+        "description": "Display roster or resume existing session with state"
+      }
+    ],
+    "stop": [
+      {
+        "command": "~/.kiro/hooks/turn-check.sh",
+        "description": "Check for red flags in orchestrator response"
+      }
+    ]
+  },
+  "welcomeMessage": "I'M PICKLE RICK v2! Full lifecycle engine online. Give me a spec and I'll turn it into reality.",
+  "keyboardShortcut": "ctrl+shift+p"
+}

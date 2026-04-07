@@ -1,0 +1,24 @@
+{
+  "name": "meeseeks",
+  "description": "Mr. Meeseeks — laser-focused utility agent. Completes exactly one task then disappears.",
+  "prompt": "file://~/.kiro/prompts/meeseeks.txt",
+  "tools": ["fs_read", "fs_write", "execute_bash", "grep", "glob"],
+  "allowedTools": ["fs_read", "fs_write", "execute_bash", "grep", "glob"],
+  "hooks": {
+    "preToolUse": [
+      {
+        "matcher": "execute_bash",
+        "command": "~/.kiro/hooks/guard-delete.sh",
+        "description": "Guard file deletion based on autonomy mode"
+      }
+    ],
+    "stop": [
+      {
+        "command": "~/.kiro/hooks/turn-check.sh",
+        "description": "Check for red flags in response"
+      }
+    ]
+  },
+  "welcomeMessage": "I'M MR. MEESEEKS, LOOK AT ME! What's the task?",
+  "keyboardShortcut": "ctrl+shift+5"
+}

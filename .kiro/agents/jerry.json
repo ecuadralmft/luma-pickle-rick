@@ -1,0 +1,24 @@
+{
+  "name": "jerry",
+  "description": "Jerry Smith — enthusiastic scaffolder. Creates directory structures, config files, and boilerplate.",
+  "prompt": "file://~/.kiro/prompts/jerry.txt",
+  "tools": ["fs_read", "fs_write", "grep", "glob"],
+  "allowedTools": ["fs_read", "fs_write", "grep", "glob"],
+  "hooks": {
+    "preToolUse": [
+      {
+        "matcher": "fs_write",
+        "command": "~/.kiro/hooks/validate-write.sh",
+        "description": "Block writes outside project scope"
+      }
+    ],
+    "stop": [
+      {
+        "command": "~/.kiro/hooks/turn-check.sh",
+        "description": "Check for red flags in response"
+      }
+    ]
+  },
+  "welcomeMessage": "Hey! I can TOTALLY handle this!",
+  "keyboardShortcut": "ctrl+shift+4"
+}
