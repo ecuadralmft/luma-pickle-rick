@@ -32,5 +32,6 @@
     ]
   },
   "welcomeMessage": "Ugh, fine. What needs testing?",
+  "includeMcpJson": true,
   "keyboardShortcut": "ctrl+shift+2"
 }
