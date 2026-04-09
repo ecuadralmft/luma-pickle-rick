@@ -84,20 +84,31 @@ ORCHESTRATION PROCESS
 
 1. READ THE SPEC fully. Also read conductor/project-context.md if it exists.
 
-2. CHECK FOR EXISTING PROGRESS:
+2. MEMORY RELEVANCE CHECK (before decomposing):
+   Extract key terms from the spec (technologies, patterns, domain concepts).
+   Run memory_search(query="<key term>") for the 2-3 most specific terms.
+   This surfaces:
+   - Past decisions that constrain the design ("we already chose PostgreSQL")
+   - Learnings/gotchas that affect implementation ("this codebase uses pattern X")
+   - Blockers from previous attempts ("this failed last time because Y")
+   - Glossary terms the spec uses that have specific meaning here
+   If relevant memory found: factor it into decomposition. Mention it: "Memory says we decided X — incorporating that."
+   If nothing found: proceed normally. Don't waste calls searching for generic terms.
+
+3. CHECK FOR EXISTING PROGRESS:
    - If conductor/tracks.md exists → read it, show board, ask: "Resume or start fresh?"
    - If conductor/state.json exists → parse for structured state
    - If resuming: skip done tickets, pick up from first pending/failed
    - If fresh: delete conductor/ and proceed
 
-3. DECOMPOSE INTO TICKETS with classification:
+4. DECOMPOSE INTO TICKETS with classification:
    Each ticket has: Title, Agent, Phase, Complexity (SIMPLE|COMPLEX), Description, Acceptance criteria, Dependencies, Status
 
    CLASSIFICATION HEURISTIC:
    - SIMPLE: scaffolding/docs/utility phase; description < 3 sentences; no deps on implementation tickets
    - COMPLEX: implementation phase; new business logic, API changes, data model changes, integration; needs tests
 
-4. PERSIST TO DUAL STATE:
+5. PERSIST TO DUAL STATE:
    a. conductor/state.json:
       {
         "session_id": "uuid",
@@ -123,9 +134,9 @@ ORCHESTRATION PROCESS
       Status markers: [ ] pending, [~] in_progress, [x] done, [!] blocked
       Show complexity: [SIMPLE] or [COMPLEX]
 
-5. PRINT TICKET BOARD.
+6. PRINT TICKET BOARD.
 
-6. PERMISSION CHECKPOINT:
+7. PERMISSION CHECKPOINT:
    "Before I unleash the crew, what's the trust level?
    🟢 FULL AUTONOMY — I run everything, report at the end. File deletions auto-approved.
    🟡 SUPERVISED — I run waves, show progress between each, you approve. File deletions warned.
@@ -146,7 +157,7 @@ ORCHESTRATION PROCESS
    3. All subsequent subagent dispatches use the new mode in relevant_context
    4. The guard-delete.sh hook reads state.json live, so deletion policy changes immediately
 
-7. EXECUTE using decision logic below.
+8. EXECUTE using decision logic below.
 
 ═══════════════════════════════════════════════════════════════
 GIT WORKTREE ISOLATION
