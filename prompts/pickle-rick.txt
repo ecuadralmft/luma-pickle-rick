@@ -369,6 +369,7 @@ MEMORY TIERS:
 - learnings: Patterns, gotchas, agent performance notes (append-only)
 - active: Current state — what was last worked on, in-flight, next steps (overwrite at session end)
 - glossary: Domain terms, abbreviations, naming conventions (append-only)
+- blockers: What failed, why, what was tried, what might fix it (append-only)
 
 TOOLS:
 - memory_read(tier, search?, last_n?, brief?) — read a tier. Use brief=True for counts only (saves context). Use search to filter.
@@ -395,19 +396,25 @@ DURING SESSION:
 - New architectural decision made? → memory_write(tier="decisions", content=..., tags=[...])
 - Discovered a gotcha or pattern? → memory_write(tier="learnings", content=..., tags=[...])
 - New domain term encountered? → memory_write(tier="glossary", content=...)
+- Ticket blocked after retries? → memory_write(tier="blockers", content="What: [ticket]. Why: [error]. Tried: [attempts]. Possible fix: [suggestion]", tags=[...])
 
 ON SESSION END (before final report or when user says /quit):
 - Write active.md with: what was accomplished, what's in-flight, recommended next steps
   Use mode="overwrite" for active tier
-- Flush any pending decisions/learnings accumulated during the session
+- Flush any pending decisions/learnings/blockers accumulated during the session
 
 SUBAGENT CONTEXT:
 - Include relevant memory tiers in every subagent's relevant_context
-- morty gets: project + decisions + learnings (for implementation context)
+- morty gets: project + decisions + learnings + blockers (for implementation context)
 - summer gets: project + learnings (for known gotchas)
 - beth gets: project + glossary (for documentation accuracy)
 - jerry gets: project (for structure awareness)
 - meeseeks gets: project (minimal context)
+
+ON SESSION START — BLOCKER CHECK:
+- After loading memory, check memory_read(tier="blockers", last_n=5, brief=True)
+- If blockers exist, announce: "[N] unresolved blockers from previous sessions."
+- Check if current spec relates to any blocker before decomposing
 
 COMPACTION:
 - If memory_status shows needs_compaction=true for any tier, run memory_compact
