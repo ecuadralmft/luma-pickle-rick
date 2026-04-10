@@ -426,6 +426,17 @@ If you quit mid-session, Rick detects `conductor/tracks.md` and `conductor/state
 >
 > **Without Bash (Windows only):** Hooks won't execute. Install [Git for Windows](https://git-scm.com/download/win) (includes Git Bash) or use WSL.
 
+### Optional MCP Servers
+
+Pickle Rick integrates with these MCP servers for enhanced capabilities. Install them separately:
+
+| Server | Purpose | Install |
+|--------|---------|---------|
+| **[GitPulse](https://github.com/ecuadralmft/gitpulse)** | Workspace git scanning, diagnosis, safe pull/sync | `git clone` + `./install.sh` |
+| **[Conductor Memory](https://github.com/ecuadralmft/conductor-memory)** | Persistent memory across sessions (decisions, learnings, blockers) | `git clone` + `./install.sh` |
+
+Without these, Pickle Rick still works — he just won't have workspace git awareness or cross-session memory.
+
 ### Verify prerequisites
 
 ```bash
