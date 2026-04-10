@@ -478,6 +478,52 @@ The installer copies agents, prompts, and hooks to `~/.kiro/` and enables the re
 
 ---
 
+## Updating
+
+If you already have Pickle Rick installed and want to pull the latest version:
+
+```bash
+cd luma-pickle-rick    # or wherever you cloned it
+git pull origin main
+./install.sh
+```
+
+> ⚠️ **Warning: `install.sh` overwrites files in `~/.kiro/`.**
+>
+> If you've made local changes to agents, prompts, or hooks (e.g., customized `morty.json`, edited `pickle-rick.txt`, modified hook scripts), running `install.sh` will replace them with the repo versions.
+>
+> **To preserve local changes:**
+>
+> 1. **Before updating**, back up your customizations:
+>    ```bash
+>    cp -r ~/.kiro/agents ~/.kiro/agents.bak
+>    cp -r ~/.kiro/prompts ~/.kiro/prompts.bak
+>    cp -r ~/.kiro/hooks ~/.kiro/hooks.bak
+>    ```
+>
+> 2. Run the update:
+>    ```bash
+>    git pull origin main
+>    ./install.sh
+>    ```
+>
+> 3. **After updating**, diff and merge your changes back:
+>    ```bash
+>    # See what changed
+>    diff ~/.kiro/agents.bak/morty.json ~/.kiro/agents/morty.json
+>    diff ~/.kiro/prompts.bak/pickle-rick.txt ~/.kiro/prompts/pickle-rick.txt
+>
+>    # Merge back any customizations you want to keep
+>    # Then clean up
+>    rm -rf ~/.kiro/agents.bak ~/.kiro/prompts.bak ~/.kiro/hooks.bak
+>    ```
+>
+> If you haven't modified any files in `~/.kiro/`, you can safely run `install.sh` without backing up.
+
+Restart Kiro CLI after updating to load the new configurations.
+
+---
+
 ## Configuration
 
 Agent configs live in `~/.kiro/agents/` (JSON). Persona prompts live in `~/.kiro/prompts/` (TXT).
