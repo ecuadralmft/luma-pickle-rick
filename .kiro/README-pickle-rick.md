@@ -419,6 +419,7 @@ If you quit mid-session, Rick detects `conductor/tracks.md` and `conductor/state
 | **Git** | ✅ Yes | Worktree isolation, `git diff` auditing, `git revert` safety, branch-per-ticket | macOS: `brew install git` or `xcode-select --install`<br>Linux: `sudo apt install git` (Ubuntu/Debian) or `sudo yum install git` (RHEL/Fedora)<br>Windows: [git-scm.com/download/win](https://git-scm.com/download/win) — includes Git Bash |
 | **Python 3** | ✅ Yes | All hooks use `python3` to parse JSON events from Kiro CLI; `install.sh` uses it to merge settings | macOS: `brew install python3` (or pre-installed)<br>Linux: `sudo apt install python3` (usually pre-installed)<br>Windows: [python.org/downloads](https://www.python.org/downloads/) — check "Add to PATH" during install |
 | **Bash** | ✅ Yes | All hooks (`.sh` files), `install.sh` | macOS/Linux: pre-installed<br>Windows: included with [Git for Windows](https://git-scm.com/download/win), or use WSL |
+| **luma-mcp-tools** | ✅ Yes | MCP servers — memory, git ops, web search (68 tools) | See [luma-mcp-tools](https://github.com/ecuadralmft/luma-mcp-tools) — install first |
 
 > **Without Git:** Rick falls back to single-directory mode with a warning — worktree isolation and diff-based refactoring are disabled. Everything else still works.
 >
@@ -439,26 +440,58 @@ bash --version            # Bash (relevant on Windows)
 ### macOS / Linux
 
 ```bash
-git clone https://github.com/ecuadralmft/luma-pickle-rick.git
-cd luma-pickle-rick
-./install.sh
+# Step 1: Install MCP tool servers
+git clone https://github.com/ecuadralmft/luma-mcp-tools.git ~/luma-mcp-tools
+cd ~/luma-mcp-tools && ./install.sh
+
+# Step 2: Install the orchestrator
+git clone https://github.com/ecuadralmft/luma-pickle-rick.git ~/luma-pickle-rick
+cd ~/luma-pickle-rick && ./install.sh
+
+# Step 3: Launch
+cd ~/your-project
+kiro-cli chat --agent pickle-rick --trust-all-tools
 ```
 
 ### Windows (WSL / Ubuntu on Windows) — Recommended
 
 ```bash
 # Run inside your WSL terminal
-git clone https://github.com/ecuadralmft/luma-pickle-rick.git
-cd luma-pickle-rick
-./install.sh
+
+# Step 1: Install MCP tool servers
+git clone https://github.com/ecuadralmft/luma-mcp-tools.git ~/luma-mcp-tools
+cd ~/luma-mcp-tools && ./install.sh
+
+# Step 2: Install the orchestrator
+git clone https://github.com/ecuadralmft/luma-pickle-rick.git ~/luma-pickle-rick
+cd ~/luma-pickle-rick && ./install.sh
+
+# Step 3: (Optional) Set up launcher shortcut
+export PATH="$HOME/bin:$PATH"  # add to ~/.bashrc for persistence
+
+# Step 4: Launch
+cd ~/your-project
+pickle-rick --mode full
+# or: kiro-cli chat --agent pickle-rick --trust-all-tools
 ```
 
 ### Windows (PowerShell — native, no WSL)
 
 ```powershell
-git clone https://github.com/ecuadralmft/luma-pickle-rick.git
-cd luma-pickle-rick
+# Step 1: Install MCP tool servers
+git clone https://github.com/ecuadralmft/luma-mcp-tools.git "$HOME\luma-mcp-tools"
+cd "$HOME\luma-mcp-tools"
 bash install.sh    # requires Git Bash or bash in PATH
+
+# Step 2: Install the orchestrator
+git clone https://github.com/ecuadralmft/luma-pickle-rick.git "$HOME\luma-pickle-rick"
+cd "$HOME\luma-pickle-rick"
+bash install.sh
+
+# Step 3: Launch
+cd "$HOME\my-project"
+git init
+kiro-cli chat --agent pickle-rick --trust-all-tools
 ```
 
 > **Note:** The hooks are bash scripts. On native Windows without WSL, install [Git for Windows](https://git-scm.com/download/win) (includes Git Bash) to get bash in your PATH. WSL is the recommended approach for Windows users.
