@@ -31,6 +31,13 @@
       "env": {
         "WEB_SEARCH_BACKEND": "ddg"
       }
+    },
+    "pb-ticket": {
+      "command": "/home/edgardcuadra/luma-mcp-tools/servers/pb_ticket/.venv/bin/python3",
+      "args": [
+        "/home/edgardcuadra/luma-mcp-tools/servers/pb_ticket/run.py"
+      ],
+      "env": {}
     }
   },
   "tools": [
@@ -41,7 +48,8 @@
     "@gitpulse",
     "@luma-mcp-server",
     "@obsidian",
-    "@web"
+    "@web",
+    "@pb-ticket"
   ],
   "toolAliases": {},
   "allowedTools": [
