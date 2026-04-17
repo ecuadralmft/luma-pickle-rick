@@ -46,7 +46,20 @@ else
     echo "  ✓ Settings created"
 fi
 
+# Install MCP tools (GitPulse + Obsidian Memory)
+MCP_TOOLS_DIR="$HOME/luma-mcp-tools"
+MCP_TOOLS_REPO="https://github.com/ecuadralmft/luma-mcp-tools.git"
+if [ -d "$MCP_TOOLS_DIR" ]; then
+    echo "  ✓ luma-mcp-tools already cloned at $MCP_TOOLS_DIR"
+else
+    echo "  Cloning luma-mcp-tools..."
+    git clone "$MCP_TOOLS_REPO" "$MCP_TOOLS_DIR"
+    echo "  ✓ Cloned luma-mcp-tools"
+fi
+echo "  Running MCP tools installer..."
+bash "$MCP_TOOLS_DIR/install.sh"
+
 echo ""
 echo "🥒 Installation complete! Restart Kiro CLI, then:"
-echo "   /agent pickle-rick"
-echo "   or press Ctrl+Shift+P"
+echo "   kiro-cli chat"
+echo "   (Pickle Rick loads automatically from your system prompt)"
