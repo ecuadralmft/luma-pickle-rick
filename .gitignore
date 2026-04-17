@@ -19,5 +19,10 @@
 !.kiro/settings/
 !.kiro/settings/mcp.json.example
 
+# Allow launcher
+!bin/
+!bin/pickle-rick
+
 # Conductor state stays local (not pushed)
 # conductor/
+.gitpulse/

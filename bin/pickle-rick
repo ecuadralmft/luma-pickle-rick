@@ -1,0 +1,91 @@
+#!/bin/bash
+# Pickle Rick launcher — sets tool access level then starts kiro-cli
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+STATE_FILE="conductor/state.json"
+MODE=""
+
+usage() {
+  echo "Usage: pickle-rick [--mode full|medium|low] [--resume] [PROMPT...]"
+  echo ""
+  echo "Modes:"
+  echo "  full   — all tools auto-approved, FULL_AUTONOMY"
+  echo "  medium — read tools auto-approved, write tools confirm, SUPERVISED"
+  echo "  low    — confirm everything, MANUAL"
+  exit 0
+}
+
+# Read-only tools that are safe to auto-approve in medium mode
+READ_TOOLS="fs_read,grep,glob,memory_read,memory_search,memory_status,memory_note_read,memory_backlinks,memory_graph,discover_tools,scan_workspace,diagnose_workspace,repo_status,sync_report,vault_list"
+
+# Parse args
+KIRO_ARGS=()
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --mode) MODE="$2"; shift 2 ;;
+    --help|-h) usage ;;
+    *) KIRO_ARGS+=("$1"); shift ;;
+  esac
+done
+
+# Prompt if no mode given
+if [ -z "$MODE" ]; then
+  # Check if state.json has a saved mode
+  if [ -f "$STATE_FILE" ]; then
+    SAVED=$(python3 -c "import json; print(json.load(open('$STATE_FILE')).get('permission_mode',''))" 2>/dev/null)
+    case "$SAVED" in
+      FULL_AUTONOMY) SAVED_LABEL="full" ;;
+      SUPERVISED)    SAVED_LABEL="medium" ;;
+      MANUAL)        SAVED_LABEL="low" ;;
+      *)             SAVED_LABEL="" ;;
+    esac
+  fi
+
+  echo "🥒 Tool access level?"
+  echo "  1) FULL   — all tools auto-approved, zero interruptions"
+  echo "  2) MEDIUM — read tools auto, writes need confirmation"
+  echo "  3) LOW    — confirm every tool call"
+  if [ -n "$SAVED_LABEL" ]; then
+    read -p "Pick [1/2/3] (last session: $SAVED_LABEL): " choice
+  else
+    read -p "Pick [1/2/3]: " choice
+  fi
+  case "$choice" in
+    1|full)   MODE="full" ;;
+    3|low)    MODE="low" ;;
+    *)        MODE="medium" ;;
+  esac
+fi
+
+# Map mode to permission_mode for conductor/state.json
+case "$MODE" in
+  full)   PERM="FULL_AUTONOMY" ;;
+  medium) PERM="SUPERVISED" ;;
+  low)    PERM="MANUAL" ;;
+  *)      echo "Unknown mode: $MODE"; exit 1 ;;
+esac
+
+# Write mode to state.json so hooks and agents can read it
+if [ -f "$STATE_FILE" ]; then
+  python3 -c "
+import json
+with open('$STATE_FILE') as f: d = json.load(f)
+d['permission_mode'] = '$PERM'
+with open('$STATE_FILE', 'w') as f: json.dump(d, f, indent=2)
+"
+else
+  mkdir -p conductor
+  python3 -c "
+import json
+d = {'permission_mode': '$PERM', 'current_phase': 'idle', 'tickets': {}}
+with open('$STATE_FILE', 'w') as f: json.dump(d, f, indent=2)
+"
+fi
+
+# Build kiro-cli command
+case "$MODE" in
+  full)   exec kiro-cli chat --agent pickle-rick --trust-all-tools "${KIRO_ARGS[@]}" ;;
+  medium) exec kiro-cli chat --agent pickle-rick --trust-tools="$READ_TOOLS" "${KIRO_ARGS[@]}" ;;
+  low)    exec kiro-cli chat --agent pickle-rick --trust-tools= "${KIRO_ARGS[@]}" ;;
+esac
