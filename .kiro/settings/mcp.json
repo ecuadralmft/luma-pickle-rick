@@ -1,5 +1,102 @@
 {
   "mcpServers": {
+    "luma-remote": {
+      "url": "https://ai-mcp.lumafintech.com/mcp",
+      "headers": {
+        "Accept": "application/json, text/event-stream"
+      }
+    },
+    "memory": {
+      "command": "luma",
+      "args": [
+        "mcp",
+        "memory"
+      ],
+      "env": {
+        "MEMORY_BACKENDS": "file,sqlite"
+      }
+    },
+    "gitpulse": {
+      "command": "luma",
+      "args": [
+        "mcp",
+        "gitpulse"
+      ],
+      "env": {}
+    },
+    "web": {
+      "command": "luma",
+      "args": [
+        "mcp",
+        "web"
+      ],
+      "env": {
+        "WEB_SEARCH_BACKEND": "ddg"
+      }
+    },
+    "obsidian": {
+      "command": "luma",
+      "args": [
+        "mcp",
+        "obsidian"
+      ],
+      "env": {
+        "MEMORY_ROOT": "/Users/edgardcuadra/luma-memory"
+      }
+    },
+    "jira": {
+      "command": "luma",
+      "args": [
+        "mcp",
+        "jira"
+      ],
+      "env": {
+        "JIRA_DOMAIN": "navianexchange.atlassian.net",
+        "JIRA_EMAIL": "ecuadra@lumafintech.com",
+        "JIRA_TOKEN": "YOUR_JIRA_TOKEN_HERE"
+      }
+    },
+    "pb-ticket": {
+      "command": "luma",
+      "args": [
+        "mcp",
+        "pb-ticket"
+      ],
+      "env": {
+        "JIRA_DOMAIN": "navianexchange.atlassian.net",
+        "JIRA_EMAIL": "ecuadra@lumafintech.com",
+        "JIRA_TOKEN": "YOUR_JIRA_TOKEN_HERE"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_GITHUB_TOKEN_HERE"
+      }
+    },
+    "slack": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-slack"
+      ],
+      "env": {
+        "SLACK_TEAM_ID": "TCJMWUK8F",
+        "SLACK_BOT_TOKEN": "xoxb-REPLACE-WITH-YOUR-BOT-TOKEN"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@upstash/context7-mcp"
+      ],
+      "env": {}
+    },
     "sequential-thinking": {
       "command": "npx",
       "args": [
@@ -15,100 +112,6 @@
         "@playwright/mcp@latest"
       ],
       "env": {}
-    },
-    "github": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-github"
-      ],
-      "env": {
-        "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_GITHUB_TOKEN_HERE"
-      }
-    },
-    "jira": {
-      "command": "luma",
-      "args": [
-        "mcp",
-        "jira"
-      ],
-      "env": {
-        "JIRA_DOMAIN": "navianexchange.atlassian.net",
-        "JIRA_EMAIL": "ecuadra@lumafintech.com",
-        "JIRA_TOKEN": "YOUR_JIRA_TOKEN_HERE"
-      }
-    },
-    "web": {
-      "command": "/Users/edgardcuadra/luma-mcp-tools/servers/web/.venv/bin/python3",
-      "args": [
-        "/Users/edgardcuadra/luma-mcp-tools/servers/web/run.py"
-      ],
-      "env": {
-        "WEB_SEARCH_BACKEND": "ddg"
-      }
-    },
-    "slack": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-slack"
-      ],
-      "env": {
-        "SLACK_TEAM_ID": "TCJMWUK8F",
-        "SLACK_BOT_TOKEN": "YOUR_SLACK_BOT_TOKEN_HERE"
-      }
-    },
-    "luma-remote": {
-      "url": "https://ai-mcp.lumafintech.com/mcp",
-      "headers": {
-        "Accept": "application/json, text/event-stream"
-      }
-    },
-    "context7": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@upstash/context7-mcp"
-      ],
-      "env": {}
-    },
-    "gitpulse": {
-      "command": "/Users/edgardcuadra/luma-mcp-tools/servers/gitpulse/.venv/bin/python3",
-      "args": [
-        "/Users/edgardcuadra/luma-mcp-tools/servers/gitpulse/server.py"
-      ],
-      "env": {}
-    },
-    "obsidian": {
-      "command": "/Users/edgardcuadra/luma-mcp-tools/servers/obsidian/.venv/bin/python3",
-      "args": [
-        "/Users/edgardcuadra/luma-mcp-tools/servers/obsidian/run.py"
-      ],
-      "env": {
-        "MEMORY_ROOT": "/Users/edgardcuadra/luma-memory"
-      }
-    },
-    "pb-ticket": {
-      "command": "luma",
-      "args": [
-        "mcp",
-        "pb-ticket"
-      ],
-      "env": {
-        "JIRA_EMAIL": "ecuadra@lumafintech.com",
-        "JIRA_TOKEN": "YOUR_JIRA_TOKEN_HERE",
-        "JIRA_DOMAIN": "navianexchange.atlassian.net"
-      }
-    },
-    "memory": {
-      "command": "luma",
-      "args": [
-        "mcp",
-        "memory"
-      ],
-      "env": {
-        "MEMORY_BACKENDS": "file,sqlite"
-      }
     }
   }
 }
