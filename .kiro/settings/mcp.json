@@ -26,28 +26,6 @@
         "GITHUB_PERSONAL_ACCESS_TOKEN": "YOUR_GITHUB_TOKEN_HERE"
       }
     },
-    "memory": {
-      "command": "luma",
-      "args": [
-        "mcp",
-        "memory"
-      ],
-      "env": {
-        "MEMORY_BACKENDS": "file,sqlite"
-      }
-    },
-    "pb-ticket": {
-      "command": "luma",
-      "args": [
-        "mcp",
-        "pb-ticket"
-      ],
-      "env": {
-        "JIRA_EMAIL": "ecuadra@lumafintech.com",
-        "JIRA_TOKEN": "YOUR_JIRA_TOKEN_HERE",
-        "JIRA_DOMAIN": "navianexchange.atlassian.net"
-      }
-    },
     "jira": {
       "command": "luma",
       "args": [
@@ -61,10 +39,9 @@
       }
     },
     "web": {
-      "command": "luma",
+      "command": "/Users/edgardcuadra/luma-mcp-tools/servers/web/.venv/bin/python3",
       "args": [
-        "mcp",
-        "web"
+        "/Users/edgardcuadra/luma-mcp-tools/servers/web/run.py"
       ],
       "env": {
         "WEB_SEARCH_BACKEND": "ddg"
@@ -96,11 +73,42 @@
       "env": {}
     },
     "gitpulse": {
+      "command": "/Users/edgardcuadra/luma-mcp-tools/servers/gitpulse/.venv/bin/python3",
+      "args": [
+        "/Users/edgardcuadra/luma-mcp-tools/servers/gitpulse/server.py"
+      ],
+      "env": {}
+    },
+    "obsidian": {
+      "command": "/Users/edgardcuadra/luma-mcp-tools/servers/obsidian/.venv/bin/python3",
+      "args": [
+        "/Users/edgardcuadra/luma-mcp-tools/servers/obsidian/run.py"
+      ],
+      "env": {
+        "MEMORY_ROOT": "/Users/edgardcuadra/luma-memory"
+      }
+    },
+    "pb-ticket": {
       "command": "luma",
       "args": [
         "mcp",
-        "gitpulse"
-      ]
+        "pb-ticket"
+      ],
+      "env": {
+        "JIRA_EMAIL": "ecuadra@lumafintech.com",
+        "JIRA_TOKEN": "YOUR_JIRA_TOKEN_HERE",
+        "JIRA_DOMAIN": "navianexchange.atlassian.net"
+      }
+    },
+    "memory": {
+      "command": "luma",
+      "args": [
+        "mcp",
+        "memory"
+      ],
+      "env": {
+        "MEMORY_BACKENDS": "file,sqlite"
+      }
     }
   }
 }
