@@ -97,14 +97,16 @@
         "summer",
         "beth",
         "jerry",
-        "meeseeks"
+        "meeseeks",
+        "pb-author"
       ],
       "trustedAgents": [
         "morty",
         "summer",
         "beth",
         "jerry",
-        "meeseeks"
+        "meeseeks",
+        "pb-author"
       ]
     }
   },
