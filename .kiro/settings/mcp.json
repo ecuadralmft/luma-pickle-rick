@@ -35,10 +35,9 @@
       }
     },
     "obsidian": {
-      "command": "luma",
+      "command": "/Users/edgardcuadra/luma-mcp-tools/servers/obsidian/.venv/bin/python3",
       "args": [
-        "mcp",
-        "obsidian"
+        "/Users/edgardcuadra/luma-mcp-tools/servers/obsidian/run.py"
       ],
       "env": {
         "MEMORY_ROOT": "/Users/edgardcuadra/luma-memory"
