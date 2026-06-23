@@ -7,6 +7,7 @@
 
 # Allow .kiro project files
 !.kiro/
+!.kiro/.gitignore
 !.kiro/README-pickle-rick.md
 !.kiro/agents/
 !.kiro/agents/*.json
@@ -18,6 +19,11 @@
 # Allow settings scaffolding (example only, not user-specific configs)
 !.kiro/settings/
 !.kiro/settings/mcp.json.example
+!.kiro/settings/mcp.json
+
+# Allow steering docs
+!.kiro/steering/
+!.kiro/steering/*.md
 
 # Allow launcher
 !bin/
