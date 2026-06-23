@@ -1,0 +1,9 @@
+sessions/
+logs/
+*.log
+*.lock
+settings/cli.json
+settings/feed_state.json
+settings/survey_state.json
+settings/*.bak-*
+.cli_bash_history

@@ -12,20 +12,25 @@ echo ""
 mkdir -p "$KIRO_DIR/agents" "$KIRO_DIR/prompts" "$KIRO_DIR/hooks"
 
 # Copy prompts
-cp "$SCRIPT_DIR/prompts/"*.txt "$KIRO_DIR/prompts/"
+cp "$SCRIPT_DIR/.kiro/prompts/"*.txt "$KIRO_DIR/prompts/"
 echo "  ✓ Prompts installed to $KIRO_DIR/prompts/"
 
 # Copy hooks and make executable
-cp "$SCRIPT_DIR/hooks/"*.sh "$KIRO_DIR/hooks/"
+cp "$SCRIPT_DIR/.kiro/hooks/"*.sh "$KIRO_DIR/hooks/"
 chmod +x "$KIRO_DIR/hooks/"*.sh
 echo "  ✓ Hooks installed to $KIRO_DIR/hooks/"
 
+# Steering docs
+mkdir -p "$KIRO_DIR/steering"
+cp "$SCRIPT_DIR/.kiro/steering/"*.md "$KIRO_DIR/steering/" 2>/dev/null || true
+echo "  ✓ Steering docs installed to $KIRO_DIR/steering/"
+
 # Patch agent configs with correct home directory and copy
-for f in "$SCRIPT_DIR/agents/"*.json; do
+for f in "$SCRIPT_DIR/.kiro/agents/"*.json; do
     BASENAME=$(basename "$f")
     sed "s|file://KIRO_HOME/|file://$KIRO_DIR/|g" "$f" > "$KIRO_DIR/agents/$BASENAME"
 done
-echo "  ✓ Agents installed to $KIRO_DIR/agents/"
+echo "  ✓ Agents installed to $KIRO_DIR/agents/ (8 agents)"
 
 # Enable required settings
 SETTINGS_DIR="$KIRO_DIR/settings"
@@ -60,6 +65,7 @@ echo "  Running MCP tools installer..."
 bash "$MCP_TOOLS_DIR/install.sh"
 
 echo ""
-echo "🥒 Installation complete! Restart Kiro CLI, then:"
+echo "🥒 Installation complete! Installed: Agents, Prompts, Hooks, Steering"
+echo "   Restart Kiro CLI, then:"
 echo "   kiro-cli chat"
 echo "   (Pickle Rick loads automatically from your system prompt)"
